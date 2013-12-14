@@ -38,37 +38,45 @@ function init() {
   GAME.outCtx = GAME.outCanv.getContext('2d')
   document.body.appendChild(GAME.outCanv)
 
-  GAME.player = new Player(GAME.w/2, GAME.h/2, 25, 0, 0, 0, 0)
+  GAME.player = new Player(GAME.w/2, GAME.h/2, 25, 0, 0, 0)
   GAME.spawner = new Spawner()
   requestAnimationFrame(animate)
 }
 
 
-function Entity(x, y, size, rot, vx, vy) {
+function Entity(x, y, size, rot, speed) {
   this.x = x || 0
   this.y = y || 0
   this.size = size || 10
   this.rot = rot || 0
-  this.vx = vx || 0
-  this.vy = vy || 0
+  this.speed = speed || 0
+
 }
 
 Entity.prototype.physics = function() {
-  this.x += this.vx * Math.cos(this.rot)
-  this.y += this.vy * Math.sin(this.rot)
+  this.x += this.speed * Math.cos(this.rot)
+  this.y += this.speed * Math.sin(this.rot)
 }
 
-Entity.prototype.draw = function(ctx) {
-  if(this.size <= 0) return
+Entity.prototype.getGradient = function(ctx, r, g, b ) {
   var cX = Math.abs(this.x + Math.cos(this.rot)/2)
   var cY = Math.abs(this.y + Math.sin(this.rot)/2)
   var grad = ctx.createRadialGradient(cX, cY, 1, cX, cY, this.size)
-  grad.addColorStop(0, 'rgba(55,55,255,.7)')
-  grad.addColorStop(0.4, 'rgba(55,55,255,.6)')
-  grad.addColorStop(.7, 'rgba(55,55,255,1)')
-  grad.addColorStop(1, 'rgba(55,55,255,0)')
+  var alpha = function(alpha) {
+    return 'rgba('+r+','+g+','+b+','+alpha+')'
+  }
+  grad.addColorStop(0, alpha(.7))
+  grad.addColorStop(0.4, alpha(.6))
+  grad.addColorStop(.7, alpha(1))
+  grad.addColorStop(1, alpha(0))
+  return grad
+}
 
-  ctx.fillStyle = grad //'#008080'
+Entity.prototype.draw = function(ctx) {
+  if(this.size <= 0) return;
+
+
+  ctx.fillStyle = this.getGradient(ctx, 55, 55, 255) //'#008080'
   ctx.beginPath()
   ctx.arc(this.x, this.y, this.size, 0, Math.PI*2, true)
   ctx.closePath()
@@ -108,7 +116,7 @@ Spawner.prototype.spawn = function() {
     y = Math.floor(Math.random() * GAME.h)
   }
 
-  GAME.enemies.push(new Enemy(x, y, 20, null, 0, 0, GAME.player))
+  GAME.enemies.push(new Enemy(x, y, 20, null, 5, GAME.player))
 }
 
 Spawner.prototype.draw = function(ctx) {
@@ -130,8 +138,8 @@ function dirTowards(to, from) {
   return Math.atan2(to.y-from.y, to.x-from.x)
 }
 
-function Enemy(x, y, size, rot, vx, vy, target) {
-  Entity.call(this, x, y, size, rot, vx, vy)
+function Enemy(x, y, size, rot, speed, target) {
+  Entity.call(this, x, y, size, rot, speed)
   this.target = target
 }
 Enemy.prototype = Object.create(Entity.prototype)
@@ -155,14 +163,15 @@ Enemy.prototype.draw = function(ctx) {
 }
 
 
-function Player(x, y, size, rot, vx, vy, weapon) {
-  Entity.call(this, x, y, size, rot, vx, vy)
+function Player(x, y, size, rot, speed, weapon) {
+  Entity.call(this, x, y, size, rot, speed)
   this.weapon = weapon || 0
   this.cooldown = 0
 }
 Player.prototype = Object.create(Entity.prototype)
 
 Player.prototype.physics = function(dx, dy, dr) {
+  // TODO: fix player movement to be constant speed, intead of faster diagonals
   this.x += dx
   this.y += dy
   if(this.x - this.size < 0 || this.x+this.size > GAME.w){
@@ -224,8 +233,8 @@ function rot(x, y, dir) {
 }
 
 
-function Bullet(x, y, size, rot, vx, vy) {
-  Entity.call(this, x, y, size, rot, vx, vy)
+function Bullet(x, y, size, rot, speed) {
+  Entity.call(this, x, y, size, rot, speed)
 }
 Bullet.prototype = Object.create(Entity.prototype)
 
