@@ -73,9 +73,6 @@ Entity.prototype.draw = function(ctx) {
 function Spawner() {
   this.frame = 0
   this.threshold = 150
-  GAME.enemies.push(new Enemy(10, 10, 10, null, 0, 0))
-  GAME.enemies.push(new Enemy(20, 20, 10, null, 0, 0))
-  GAME.enemies.push(new Enemy(30, 30, 10, null, 0, 0))
 }
 
 Spawner.prototype.physics = function() {
@@ -142,7 +139,7 @@ Player.prototype.physics = function(dx, dy, dr) {
   }
   this.rot += dr
 
-   if (this.weapon === 0) { return
+   if (this.weapon === 0) {
     this.cooldown--
     if (this.cooldown <= 0) {
       this.cooldown = 10
@@ -165,10 +162,18 @@ Bullet.prototype.draw = function(ctx) {
   ctx.stroke()
 }
 
-/*Bullet.prototype.physics = function() {
+Bullet.prototype.physics = function() {
   this.x += this.vx
   this.y += this.vy
-}*/
+}
+
+function outSize(enemy, x,y,w,h) {
+  if (enemy.x - enemy.size < x || enemy.x + enemy.size > w+100 ||
+        enemy.y - enemy.size < y || enemy.y + enemy.size > h+100) {
+      return true
+    }
+  return false
+}
 
 function animate() {
   requestAnimationFrame(animate)
@@ -177,18 +182,27 @@ function animate() {
   GAME.outCtx.fillRect(0, 0, GAME.w, GAME.h)
 
   GAME.spawner.physics()
-  _.each(GAME.enemies, function(enemy) {
+  for(var i=GAME.enemies.length-1; i>=0; i--){
+    var enemy = GAME.enemies[i]
     enemy.physics()
     enemy.draw(GAME.ctx)
-  })
+    if(outSize(enemy, -100, -100, GAME.w + 100, GAME.h + 100)) {
+      GAME.enemies.splice(i,1)
+    }
+
+  }
   GAME.spawner.draw(GAME.ctx)
 
   GAME.player.physics(GAME.inputX, GAME.inputY, GAME.inputRot)
   GAME.player.draw(GAME.ctx)
-  _.each(GAME.bullets, function(bullet) {
+  for(var i=GAME.bullets.length-1; i>=0; i--){
+    var bullet = GAME.bullets[i]
     bullet.physics()
     bullet.draw(GAME.ctx)
-  })
+    if(outSize(bullet, -100, -100, GAME.w + 100, GAME.h + 100)) {
+      GAME.bullets.splice(i,1)
+    }
+  }
 
   GAME.outCtx.drawImage(GAME.canv, 0, 0)
 }
