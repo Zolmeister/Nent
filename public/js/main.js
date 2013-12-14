@@ -54,28 +54,39 @@ function Entity(config) {
   this.size = config.size || 10
   this.rot = config.rot || 0
   this.speed = config.speed || 0
-  this.color = config.color || new Color()
+  this.color = config.color || randColor()
 
 }
+
+var randColor = (function() {
+  var i = 0
+  return function() {
+    i++
+    var r = Math.random()*55 + Math.random()*200*(i%3==0?1:0)
+    var g = Math.random()*55 + Math.random()*200*(i%3==1?1:0)
+    var b = Math.random()*55 + Math.random()*200*(i%3==2?1:0)
+    return new Color().rgb(r,g,b)
+  }
+})()
 
 Entity.prototype.physics = function() {
   this.x += this.speed * Math.cos(this.rot)
   this.y += this.speed * Math.sin(this.rot)
 }
 
-function getGradient(ctx, x, y, size, r, g, b ) {
+function getGradient(ctx, x, y, size, color ) {
   //var cX = Math.abs(this.x + Math.cos(this.rot)/2)
   //var cY = Math.abs(this.y + Math.sin(this.rot)/2)
   if(x <= 0) x = 1
   if(y <= 0) y = 1
   var grad = ctx.createRadialGradient(x, y, 1, x, y, size)
-  var alpha = function(alpha) {
+  /*var alpha = function(alpha) {
     return 'rgba('+r+','+g+','+b+','+alpha+')'
-  }
-  grad.addColorStop(0, alpha(.7))
-  grad.addColorStop(0.4, alpha(.6))
-  grad.addColorStop(.7, alpha(1))
-  grad.addColorStop(1, alpha(0))
+  }*/
+  grad.addColorStop(0, color.alpha(.7).rgbaString())
+  grad.addColorStop(0.4, color.alpha(.6).rgbaString())
+  grad.addColorStop(.7, color.alpha(1).rgbaString())
+  grad.addColorStop(1, color.alpha(0).rgbaString())
   return grad
 }
 
@@ -83,7 +94,7 @@ Entity.prototype.draw = function(ctx) {
   if(this.size <= 0) return;
 
 
-  ctx.fillStyle = getGradient(ctx, this.x, this.y, this.size, 55, 55, 255) //'#008080'
+  ctx.fillStyle = getGradient(ctx, this.x, this.y, this.size, this.color) //'#008080'
   ctx.beginPath()
   ctx.arc(this.x, this.y, this.size, 0, Math.PI*2, true)
   ctx.closePath()
@@ -161,7 +172,7 @@ Enemy.prototype.physics = function() {
 
 Enemy.prototype.draw = function(ctx) {
   ctx.beginPath()
-  ctx.fillStyle = getGradient(ctx, this.x, this.y, this.size, 255, 55, 255)
+  ctx.fillStyle = getGradient(ctx, this.x, this.y, this.size, this.color)
   ctx.arc(this.x, this.y, this.size, 0, Math.PI*2)
   ctx.closePath()
   ctx.fill()
