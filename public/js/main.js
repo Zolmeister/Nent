@@ -63,7 +63,9 @@ Entity.prototype.draw = function(ctx) {
   var cX = Math.abs(this.x + Math.cos(this.rot)/2)
   var cY = Math.abs(this.y + Math.sin(this.rot)/2)
   var grad = ctx.createRadialGradient(cX, cY, 1, cX, cY, this.size)
-  grad.addColorStop(0, 'rgba(55,55,255,1)')
+  grad.addColorStop(0, 'rgba(55,55,255,0)')
+  grad.addColorStop(0.5, 'rgba(55,55,255,0)')
+  grad.addColorStop(.9, 'rgba(55,55,255,1)')
   grad.addColorStop(1, 'rgba(55,55,255,0)')
 
   ctx.fillStyle = grad //'#008080'
@@ -143,7 +145,8 @@ Enemy.prototype.physics = function() {
 Enemy.prototype.draw = function(ctx) {
   ctx.beginPath()
   var grad = ctx.createRadialGradient(this.x, this.y, 1, this.x, this.y, this.size)
-  grad.addColorStop(0, 'rgba(255,55,255,1)')
+  grad.addColorStop(0, 'rgba(255,55,255,0)')
+  grad.addColorStop(0.5, 'rgba(255,55,255,1)')
   grad.addColorStop(1, 'rgba(255,55,255,0)')
   ctx.fillStyle = grad
   ctx.arc(this.x, this.y, this.size, 0, Math.PI*2)
@@ -189,7 +192,8 @@ Player.prototype.draw = function(ctx) {
     // draw arms
     var length = 10
     var grad = ctx.createRadialGradient(this.x, this.y, 1, this.x, this.y, this.size+50)
-    grad.addColorStop(0, 'rgba(55,55,255,1)')
+    grad.addColorStop(0, 'rgba(55,55,255,0)')
+    grad.addColorStop(.5, 'rgba(55,55,255,1)')
     grad.addColorStop(1, 'rgba(55,55,255,0)')
 
 
@@ -273,12 +277,12 @@ function animate() {
     enemy.physics()
     enemy.draw(GAME.ctx)
     if(collide(enemy, GAME.player)){
-      enemy.size -= 2
+      enemy.size -= 1
     }
     for(var j=GAME.bullets.length-1; j>=0; j--){
       var collided = collide(enemy, GAME.bullets[j])
       if(!GAME.bullets[j].used && collided){
-        enemy.size -= 2
+        enemy.size -= 1
         GAME.bullets[j].used = true
         GAME.score += 20
       } else if(collided) {
