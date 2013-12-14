@@ -1,3 +1,4 @@
+debug = true
 GAME = {
   moveKeys: {
     65: [-1, null], //'left',
@@ -10,14 +11,15 @@ GAME = {
     40: [null, 1], //'down'
   },
   rotKeys: {
-    74: -.1,
-    75: .1
+    74: -Math.PI/100,
+    75: Math.PI/100
   },
   inputRot: 0,
   inputX: 0,
   inputY: 0,
   bullets: [],
-  enemies: []
+  enemies: [],
+  score: 0
 }
 
 function init() {
@@ -53,13 +55,15 @@ function Entity(x, y, size, rot, vx, vy) {
 }
 
 Entity.prototype.physics = function() {
-  this.x += this.vx
-  this.y += this.vy
+  this.x += this.vx * Math.cos(this.rot)
+  this.y += this.vy * Math.sin(this.rot)
 }
 
 Entity.prototype.draw = function(ctx) {
-  var grad = ctx.createRadialGradient(this.x+20*this.vx/2, this.y+20*this.vy/2, 1, this.x+20*this.vx/2,
-                                      this.y+20*this.vy/2, this.size)
+  if(this.size <= 0) return
+  var cX = Math.abs(this.x + Math.cos(this.rot)/2)
+  var cY = Math.abs(this.y + Math.sin(this.rot)/2)
+  var grad = ctx.createRadialGradient(cX, cY, 1, cX, cY, this.size)
   grad.addColorStop(0, 'rgba(55,55,255,1)')
   grad.addColorStop(1, 'rgba(55,55,255,0)')
 
@@ -68,11 +72,14 @@ Entity.prototype.draw = function(ctx) {
   ctx.arc(this.x, this.y, this.size, 0, Math.PI*2, true)
   ctx.closePath()
   ctx.fill()
-  ctx.beginPath()
-  ctx.moveTo(this.x, this.y)
-  ctx.lineTo(this.x+10*Math.cos(this.rot), this.y+10*Math.sin(this.rot))
-  ctx.closePath()
-  ctx.stroke()
+
+  if(debug) {
+    ctx.beginPath()
+    ctx.moveTo(this.x, this.y)
+    ctx.lineTo(this.x+10*Math.cos(this.rot), this.y+10*Math.sin(this.rot))
+    ctx.closePath()
+    ctx.stroke()
+  }
 }
 
 function Spawner() {
@@ -89,7 +96,18 @@ Spawner.prototype.physics = function() {
 }
 
 Spawner.prototype.spawn = function() {
-  GAME.enemies.push(new Enemy(0, 0, 20, null, Math.random(), Math.random(), GAME.player))
+  var x, y
+  if(Math.random() > .5) {
+    // top or bottom side
+    y = Math.random() > .5 ? GAME.h : -20
+    x = Math.floor(Math.random() * GAME.w)
+  } else {
+    // left or right size
+    x = Math.random() > .5 ? GAME.w : -20
+    y = Math.floor(Math.random() * GAME.h)
+  }
+
+  GAME.enemies.push(new Enemy(x, y, 20, null, 0, 0, GAME.player))
 }
 
 Spawner.prototype.draw = function(ctx) {
@@ -156,36 +174,40 @@ Player.prototype.physics = function(dx, dy, dr) {
    if (this.weapon === 0) {
     this.cooldown--
     if (this.cooldown <= 0) {
-      this.cooldown = 20
-      GAME.bullets.push(new Bullet(this.x, this.y, 10, this.rot, 5*Math.cos(this.rot), 5*Math.sin(this.rot)))
+      this.cooldown = 10
+      var speed = 5
+      var size = 10
+      GAME.bullets.push(new Bullet(this.x, this.y, size, this.rot, speed, speed))
+      GAME.bullets.push(new Bullet(this.x, this.y, size, this.rot + 2, speed, speed))
+      GAME.bullets.push(new Bullet(this.x, this.y, size, this.rot - 2, speed, speed))
     }
   }
 }
 
 function Bullet(x, y, size, rot, vx, vy) {
-  Entity.call(this, x, y, size, null, vx, vy)
+  Entity.call(this, x, y, size, rot, vx, vy)
 }
 Bullet.prototype = Object.create(Entity.prototype)
 
-Bullet.prototype.draw = function(ctx) {
-  /*var grad = ctx.createRadialGradient(this.x+20*this.vx/2, this.y+20*this.vy/2, 1, this.x+20*this.vx/2,
+/*Bullet.prototype.draw = function(ctx) {
+  var grad = ctx.createRadialGradient(this.x+20*this.vx/2, this.y+20*this.vy/2, 1, this.x+20*this.vx/2,
                                       this.y+20*this.vy/2, this.size)
   grad.addColorStop(0, 'rgba(255,55,255,1)')
-  grad.addColorStop(1, 'rgba(255,55,255,0)')*/
+  grad.addColorStop(1, 'rgba(255,55,255,0)')
 
   ctx.lineWidth = 5
-  ctx.strokeStyle = '#71eeb8'
+  ctx.strokeStyle = grad //'#71eeb8'
   ctx.beginPath()
   ctx.moveTo(this.x, this.y)
-  ctx.lineTo(this.x+this.vx, this.y+this.vy)
+  ctx.lineTo(this.x+this.size*Math.cos(this.rot), this.y+this.size*Math.sin(this.rot))
   ctx.closePath()
   ctx.stroke()
-}
+}*/
 
-Bullet.prototype.physics = function() {
-  this.x += this.vx
-  this.y += this.vy
-}
+/*Bullet.prototype.physics = function() {
+  this.x += this.vx * Math.cos(this.rot)
+  this.y += this.vy * Math.sin(this.rot)
+}*/
 
 function outSize(enemy, x,y,w,h) {
   if (enemy.x - enemy.size < x || enemy.x + enemy.size > w+100 ||
@@ -217,8 +239,19 @@ function animate() {
     if(collide(enemy, GAME.player)){
       enemy.size -= 2
     }
-    if(outSize(enemy, -100, -100, GAME.w + 100, GAME.h + 100) || enemy.size <= 1) {
+    for(var j=GAME.bullets.length-1; j>=0; j--){
+      var collided = collide(enemy, GAME.bullets[j])
+      if(!GAME.bullets[j].used && collided){
+        enemy.size -= 2
+        GAME.bullets[j].used = true
+        GAME.score += 20
+      } else if(collided) {
+        GAME.bullets[j].size -= 5
+      }
+    }
+    if(outSize(enemy, -100, -100, GAME.w + 100, GAME.h + 100) || enemy.size <= 5) {
       GAME.enemies.splice(i,1)
+      GAME.score += 100
     }
 
 
@@ -239,7 +272,7 @@ function animate() {
   GAME.player.draw(GAME.ctx)
   GAME.spawner.draw(GAME.ctx)
 
-  GAME.outCtx.drawImage(GAME.canv, 0, 0)
+
 }
 
 $(init)
