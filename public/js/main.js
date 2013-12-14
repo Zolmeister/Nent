@@ -54,9 +54,8 @@ function Entity(config) {
   this.size = config.size || 10
   this.rot = config.rot || 0
   this.speed = config.speed || 0
-  this.color = config.color || randColor()
-  this.colorBg = new Color(this.color.rgbaString()).alpha(.1)
-  this.color.lighten(0.2)
+  this.color = config.color || randColor().lighten(0.2)
+
 }
 
 Entity.prototype.physics = function() {
@@ -67,15 +66,11 @@ Entity.prototype.physics = function() {
 Entity.prototype.draw = function(ctx) {
   if(this.size <= 0) return;
 
-  //ctx.shadowBlur = 10
-  //ctx.shadowColor = this.color.rgbString()
 
   ctx.fillStyle = getGradient(ctx, this.x, this.y, this.size*2.1, this.color, this.opacity)
   ctx.beginPath()
   ctx.arc(this.x, this.y, this.size*2.1, 0, Math.PI*2, true)
   ctx.closePath()
-  // ctx.lineWidth = 100
-  // ctx.strokeStyle = this.color.rgbaString()
   ctx.fill()
 
 
@@ -86,14 +81,6 @@ Entity.prototype.draw = function(ctx) {
     ctx.closePath()
     ctx.stroke()
   }
-}
-
-Entity.prototype.drawBg = function(ctx) { return
-  ctx.beginPath()
-  ctx.arc(this.x, this.y, this.size + 10, 0, Math.PI*2, true)
-  ctx.fillStyle = this.colorBg.rgbaString()
-  ctx.fill()
-  ctx.closePath()
 }
 
 function Spawner() {
@@ -243,25 +230,6 @@ function Bullet(x, y, size, rot, speed) {
 }
 Bullet.prototype = Object.create(Entity.prototype)
 
-/*Bullet.prototype.draw = function(ctx) {
-  var grad = ctx.createRadialGradient(this.x+20*this.vx/2, this.y+20*this.vy/2, 1, this.x+20*this.vx/2,
-                                      this.y+20*this.vy/2, this.size)
-  grad.addColorStop(0, 'rgba(255,55,255,1)')
-  grad.addColorStop(1, 'rgba(255,55,255,0)')
-
-  ctx.lineWidth = 5
-  ctx.strokeStyle = grad //'#71eeb8'
-  ctx.beginPath()
-  ctx.moveTo(this.x, this.y)
-  ctx.lineTo(this.x+this.size*Math.cos(this.rot), this.y+this.size*Math.sin(this.rot))
-  ctx.closePath()
-  ctx.stroke()
-}*/
-
-/*Bullet.prototype.physics = function() {
-  this.x += this.vx * Math.cos(this.rot)
-  this.y += this.vy * Math.sin(this.rot)
-}*/
 
 function animate() {
   requestAnimationFrame(animate)
@@ -314,11 +282,6 @@ function animate() {
 
   GAME.player.draw(GAME.ctx)
   GAME.spawner.draw(GAME.ctx)
-
-  GAME.player.drawBg(GAME.ctx)
-  for(var i=GAME.enemies.length-1; i>=0; i--){
-    GAME.enemies[i].drawBg(GAME.ctx)
-  }
 
   GAME.outCtx.drawImage(GAME.canv, 0, 0, GAME.w, GAME.h, 0, 0, GAME.outCanv.width, GAME.outCanv.height)
   GAME.outCtx.font = '16px Monospace bold'
