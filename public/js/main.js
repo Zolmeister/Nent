@@ -62,9 +62,12 @@ var randColor = (function() {
   var i = 0
   return function() {
     i++
-    var r = Math.random()*55 + Math.random()*200*(i%3==0?1:0)
-    var g = Math.random()*55 + Math.random()*200*(i%3==1?1:0)
-    var b = Math.random()*55 + Math.random()*200*(i%3==2?1:0)
+    var rM = (i%3==0?1:0)
+    var gM = (i%3==1?1:0)
+    var bM = (i%3==2?1:0)
+    var r = 25 + Math.random()*30 + 150*rM+Math.random()*100*rM
+    var g = 25 + Math.random()*30 +150*gM+Math.random()*100*gM
+    var b = 25 + Math.random()*30 + 150*bM+Math.random()*100*bM
     return new Color().rgb(r,g,b)
   }
 })()
@@ -83,8 +86,8 @@ function getGradient(ctx, x, y, size, color ) {
   /*var alpha = function(alpha) {
     return 'rgba('+r+','+g+','+b+','+alpha+')'
   }*/
-  grad.addColorStop(0, color.alpha(.7).rgbaString())
-  grad.addColorStop(0.4, color.alpha(.6).rgbaString())
+  grad.addColorStop(0, color.alpha(.4).rgbaString())
+  grad.addColorStop(0.4, color.alpha(.4).rgbaString())
   grad.addColorStop(.7, color.alpha(1).rgbaString())
   grad.addColorStop(1, color.alpha(0).rgbaString())
   return grad
@@ -306,11 +309,11 @@ function animate() {
   for(var i=GAME.enemies.length-1; i>=0; i--){
     var enemy = GAME.enemies[i]
     enemy.physics()
-    enemy.draw(GAME.ctx)
     if(collide(enemy, GAME.player)){
-      enemy.size -= 1
+      enemy.size -= .25
     }
-    for(var j=GAME.bullets.length-1; j>=0; j--){
+
+    /*for(var j=GAME.bullets.length-1; j>=0; j--){
       var collided = collide(enemy, GAME.bullets[j])
       if(!GAME.bullets[j].used && collided){
         enemy.size -= 1
@@ -319,13 +322,13 @@ function animate() {
       } else if(collided) {
         GAME.bullets[j].size -= 5
       }
-    }
+    }*/
+
+    enemy.draw(GAME.ctx)
     if(outSize(enemy, -100, -100, GAME.w + 100, GAME.h + 100) || enemy.size <= 5) {
       GAME.enemies.splice(i,1)
       GAME.score += 100
     }
-
-
   }
 
   GAME.player.physics(GAME.inputX, GAME.inputY, GAME.inputRot)
