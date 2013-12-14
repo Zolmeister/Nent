@@ -38,18 +38,23 @@ function init() {
   GAME.outCtx = GAME.outCanv.getContext('2d')
   document.body.appendChild(GAME.outCanv)
 
-  GAME.player = new Player(GAME.w/2, GAME.h/2, 25, 0, 0, 0)
+  GAME.player = new Player({
+    x:GAME.w/2, y:GAME.h/2, size:25, weapon:0
+  })
+
   GAME.spawner = new Spawner()
   requestAnimationFrame(animate)
 }
 
 
-function Entity(x, y, size, rot, speed) {
-  this.x = x || 0
-  this.y = y || 0
-  this.size = size || 10
-  this.rot = rot || 0
-  this.speed = speed || 0
+function Entity(config) {
+  //x, y, size, rot, speed, color
+  this.x = config.x || 0
+  this.y = config.y || 0
+  this.size = config.size || 10
+  this.rot = config.rot || 0
+  this.speed = config.speed || 0
+  this.color = config.color || new Color()
 
 }
 
@@ -58,10 +63,12 @@ Entity.prototype.physics = function() {
   this.y += this.speed * Math.sin(this.rot)
 }
 
-Entity.prototype.getGradient = function(ctx, r, g, b ) {
-  var cX = Math.abs(this.x + Math.cos(this.rot)/2)
-  var cY = Math.abs(this.y + Math.sin(this.rot)/2)
-  var grad = ctx.createRadialGradient(cX, cY, 1, cX, cY, this.size)
+function getGradient(ctx, x, y, size, r, g, b ) {
+  //var cX = Math.abs(this.x + Math.cos(this.rot)/2)
+  //var cY = Math.abs(this.y + Math.sin(this.rot)/2)
+  if(x <= 0) x = 1
+  if(y <= 0) y = 1
+  var grad = ctx.createRadialGradient(x, y, 1, x, y, size)
   var alpha = function(alpha) {
     return 'rgba('+r+','+g+','+b+','+alpha+')'
   }
@@ -76,7 +83,7 @@ Entity.prototype.draw = function(ctx) {
   if(this.size <= 0) return;
 
 
-  ctx.fillStyle = this.getGradient(ctx, 55, 55, 255) //'#008080'
+  ctx.fillStyle = getGradient(ctx, this.x, this.y, this.size, 55, 55, 255) //'#008080'
   ctx.beginPath()
   ctx.arc(this.x, this.y, this.size, 0, Math.PI*2, true)
   ctx.closePath()
@@ -116,7 +123,9 @@ Spawner.prototype.spawn = function() {
     y = Math.floor(Math.random() * GAME.h)
   }
 
-  GAME.enemies.push(new Enemy(x, y, 20, null, 5, GAME.player))
+  GAME.enemies.push(new Enemy({
+    x:x, y:y, size:20, speed:5, target: GAME.player
+  }))
 }
 
 Spawner.prototype.draw = function(ctx) {
@@ -138,9 +147,9 @@ function dirTowards(to, from) {
   return Math.atan2(to.y-from.y, to.x-from.x)
 }
 
-function Enemy(x, y, size, rot, speed, target) {
-  Entity.call(this, x, y, size, rot, speed)
-  this.target = target
+function Enemy(config) {
+  Entity.call(this, config)
+  this.target = config.target
 }
 Enemy.prototype = Object.create(Entity.prototype)
 
@@ -152,20 +161,16 @@ Enemy.prototype.physics = function() {
 
 Enemy.prototype.draw = function(ctx) {
   ctx.beginPath()
-  var grad = ctx.createRadialGradient(this.x, this.y, 1, this.x, this.y, this.size)
-  grad.addColorStop(0, 'rgba(255,55,255,0)')
-  grad.addColorStop(0.5, 'rgba(255,55,255,1)')
-  grad.addColorStop(1, 'rgba(255,55,255,0)')
-  ctx.fillStyle = grad
+  ctx.fillStyle = getGradient(ctx, this.x, this.y, this.size, 255, 55, 255)
   ctx.arc(this.x, this.y, this.size, 0, Math.PI*2)
   ctx.closePath()
   ctx.fill()
 }
 
 
-function Player(x, y, size, rot, speed, weapon) {
-  Entity.call(this, x, y, size, rot, speed)
-  this.weapon = weapon || 0
+function Player(config) {
+  Entity.call(this, config)
+  this.weapon = config.weapon || 0
   this.cooldown = 0
 }
 Player.prototype = Object.create(Entity.prototype)
@@ -188,9 +193,15 @@ Player.prototype.physics = function(dx, dy, dr) {
       this.cooldown = 10
       var speed = 5
       var size = 10
-      GAME.bullets.push(new Bullet(this.x, this.y, size, this.rot, speed, speed))
-      GAME.bullets.push(new Bullet(this.x, this.y, size, this.rot + 2, speed, speed))
-      GAME.bullets.push(new Bullet(this.x, this.y, size, this.rot - 2, speed, speed))
+      GAME.bullets.push(new Bullet({
+        x:this.x, y:this.y, size:size, rot:this.rot, speed:speed
+      }))
+      GAME.bullets.push(new Bullet({
+        x:this.x, y:this.y, size:size, rot:this.rot+2, speed:speed
+      }))
+      GAME.bullets.push(new Bullet({
+        x:this.x, y:this.y, size:size, rot:this.rot-2, speed:speed
+      }))
     }
   }
 }
