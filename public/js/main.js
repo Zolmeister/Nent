@@ -37,7 +37,7 @@ function init() {
   document.body.appendChild(GAME.outCanv)
 
 
-  GAME.player = new Player(GAME.w/2, GAME.h/2, 10, 0, 0)
+  GAME.player = new Player(GAME.w/2, GAME.h/2, 20, 0, 0)
   GAME.spawner = new Spawner()
   requestAnimationFrame(animate)
 }
@@ -58,7 +58,12 @@ Entity.prototype.physics = function() {
 }
 
 Entity.prototype.draw = function(ctx) {
-  ctx.fillStyle = '#008080'
+  var grad = ctx.createRadialGradient(this.x+20*this.vx/2, this.y+20*this.vy/2, 1, this.x+20*this.vx/2,
+                                      this.y+20*this.vy/2, this.size)
+  grad.addColorStop(0, 'rgba(55,55,255,1)')
+  grad.addColorStop(1, 'rgba(55,55,255,0)')
+
+  ctx.fillStyle = grad //'#008080'
   ctx.beginPath()
   ctx.arc(this.x, this.y, this.size, 0, Math.PI*2, true)
   ctx.closePath()
@@ -76,7 +81,7 @@ function Spawner() {
 }
 
 Spawner.prototype.physics = function() {
-  if (this.frame % 20 === 0) {
+  if (this.frame % 100 === 0) {
     this.spawn()
   }
 
@@ -84,7 +89,7 @@ Spawner.prototype.physics = function() {
 }
 
 Spawner.prototype.spawn = function() {
-  GAME.enemies.push(new Enemy(0, 0, 20, null, Math.random(), Math.random()))
+  GAME.enemies.push(new Enemy(0, 0, 20, null, Math.random(), Math.random(), GAME.player))
 }
 
 Spawner.prototype.draw = function(ctx) {
@@ -93,7 +98,7 @@ Spawner.prototype.draw = function(ctx) {
   var pix = data.data
   for(var i=0, l=pix.length; i<l; i+=4) {
     if(pix[i+3] < this.threshold) {
-      pix[i+3] /= 6
+      pix[i+3] /= 5
       if(pix[i+3] > this.threshold/4) {
         pix[i+3] = 0
       }
@@ -102,16 +107,25 @@ Spawner.prototype.draw = function(ctx) {
   ctx.putImageData(data, 0, 0)
 }
 
-function Enemy(x, y, size, rot, vx, vy) {
+function dirTowards(to, from) {
+  return Math.atan2(to.y-from.y, to.x-from.x)
+}
+
+function Enemy(x, y, size, rot, vx, vy, target) {
   Entity.call(this, x, y, size, rot, vx, vy)
+  this.target = target
 }
 Enemy.prototype = Object.create(Entity.prototype)
+
+Enemy.prototype.physics = function() {
+  var dir = dirTowards(this.target, this)
+  this.x += 1*Math.cos(dir)
+  this.y += Math.sin(dir)
+}
 
 Enemy.prototype.draw = function(ctx) {
   ctx.beginPath()
   var grad = ctx.createRadialGradient(this.x, this.y, 1, this.x, this.y, this.size)
-  //grad.addColorStop(0, 'rgba(' + colors.r +',' + colors.g + ',' + colors.b + ',1)')
-  //grad.addColorStop(1, 'rgba(' + colors.r +',' + colors.g + ',' + colors.b + ',0)')
   grad.addColorStop(0, 'rgba(255,55,255,1)')
   grad.addColorStop(1, 'rgba(255,55,255,0)')
   ctx.fillStyle = grad
@@ -142,7 +156,7 @@ Player.prototype.physics = function(dx, dy, dr) {
    if (this.weapon === 0) {
     this.cooldown--
     if (this.cooldown <= 0) {
-      this.cooldown = 10
+      this.cooldown = 20
       GAME.bullets.push(new Bullet(this.x, this.y, 10, this.rot, 5*Math.cos(this.rot), 5*Math.sin(this.rot)))
     }
   }
@@ -154,6 +168,12 @@ function Bullet(x, y, size, rot, vx, vy) {
 Bullet.prototype = Object.create(Entity.prototype)
 
 Bullet.prototype.draw = function(ctx) {
+  /*var grad = ctx.createRadialGradient(this.x+20*this.vx/2, this.y+20*this.vy/2, 1, this.x+20*this.vx/2,
+                                      this.y+20*this.vy/2, this.size)
+  grad.addColorStop(0, 'rgba(255,55,255,1)')
+  grad.addColorStop(1, 'rgba(255,55,255,0)')*/
+
+  ctx.lineWidth = 5
   ctx.strokeStyle = '#71eeb8'
   ctx.beginPath()
   ctx.moveTo(this.x, this.y)
@@ -175,6 +195,14 @@ function outSize(enemy, x,y,w,h) {
   return false
 }
 
+function collide(a, b) {
+  return distance(a, b) <= a.size //+ b.size
+}
+
+function distance(a, b) {
+  return Math.sqrt(Math.pow(a.x-b.x, 2) + Math.pow(a.y - b.y, 2))
+}
+
 function animate() {
   requestAnimationFrame(animate)
   GAME.outCtx.fillStyle = '#111'
@@ -186,15 +214,17 @@ function animate() {
     var enemy = GAME.enemies[i]
     enemy.physics()
     enemy.draw(GAME.ctx)
-    if(outSize(enemy, -100, -100, GAME.w + 100, GAME.h + 100)) {
+    if(collide(enemy, GAME.player)){
+      enemy.size -= 2
+    }
+    if(outSize(enemy, -100, -100, GAME.w + 100, GAME.h + 100) || enemy.size <= 1) {
       GAME.enemies.splice(i,1)
     }
 
+
   }
-  GAME.spawner.draw(GAME.ctx)
 
   GAME.player.physics(GAME.inputX, GAME.inputY, GAME.inputRot)
-  GAME.player.draw(GAME.ctx)
   for(var i=GAME.bullets.length-1; i>=0; i--){
     var bullet = GAME.bullets[i]
     bullet.physics()
@@ -203,6 +233,11 @@ function animate() {
       GAME.bullets.splice(i,1)
     }
   }
+
+
+
+  GAME.player.draw(GAME.ctx)
+  GAME.spawner.draw(GAME.ctx)
 
   GAME.outCtx.drawImage(GAME.canv, 0, 0)
 }
