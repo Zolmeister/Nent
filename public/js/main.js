@@ -25,8 +25,8 @@ GAME = {
 function init() {
   // add canvas
   GAME.canv = document.createElement('canvas')
-  GAME.w = 600 //window.innerWidth
-  GAME.h = 400 //window.innerHeight
+  GAME.w = 400 //window.innerWidth
+  GAME.h = 200 //window.innerHeight
   GAME.canv.width = GAME.w
   GAME.canv.height = GAME.h
 
@@ -38,7 +38,7 @@ function init() {
   GAME.outCtx = GAME.outCanv.getContext('2d')
   document.body.appendChild(GAME.outCanv)
 
-  GAME.player = new Player(GAME.w/2, GAME.h/2, 20, 0, 0, 0, 0)
+  GAME.player = new Player(GAME.w/2, GAME.h/2, 25, 0, 0, 0, 0)
   GAME.spawner = new Spawner()
   requestAnimationFrame(animate)
 }
@@ -63,9 +63,9 @@ Entity.prototype.draw = function(ctx) {
   var cX = Math.abs(this.x + Math.cos(this.rot)/2)
   var cY = Math.abs(this.y + Math.sin(this.rot)/2)
   var grad = ctx.createRadialGradient(cX, cY, 1, cX, cY, this.size)
-  grad.addColorStop(0, 'rgba(55,55,255,0)')
-  grad.addColorStop(0.5, 'rgba(55,55,255,0)')
-  grad.addColorStop(.9, 'rgba(55,55,255,1)')
+  grad.addColorStop(0, 'rgba(55,55,255,.7)')
+  grad.addColorStop(0.4, 'rgba(55,55,255,.6)')
+  grad.addColorStop(.7, 'rgba(55,55,255,1)')
   grad.addColorStop(1, 'rgba(55,55,255,0)')
 
   ctx.fillStyle = grad //'#008080'
@@ -85,7 +85,7 @@ Entity.prototype.draw = function(ctx) {
 
 function Spawner() {
   this.frame = 0
-  this.threshold = 150
+  this.threshold = 210
 }
 
 Spawner.prototype.physics = function() {
@@ -117,7 +117,7 @@ Spawner.prototype.draw = function(ctx) {
   var pix = data.data
   for(var i=0, l=pix.length; i<l; i+=4) {
     if(pix[i+3] < this.threshold) {
-      pix[i+3] /= 5
+      pix[i+3] /= 4
       if(pix[i+3] > this.threshold/4) {
         pix[i+3] = 0
       }
@@ -173,7 +173,7 @@ Player.prototype.physics = function(dx, dy, dr) {
   }
   this.rot += dr
 
-   if (this.weapon === 0) {
+   if (this.weapon === 0) { return
     this.cooldown--
     if (this.cooldown <= 0) {
       this.cooldown = 10
