@@ -39,7 +39,7 @@ function init() {
   document.body.appendChild(GAME.outCanv)
 
   GAME.player = new Player({
-    x:GAME.w/2, y:GAME.h/2, size:50, weapon:1
+    x:GAME.w/2, y:GAME.h/2, size:50, weapon:0
   })
 
   GAME.spawner = new Spawner()
@@ -85,7 +85,7 @@ Entity.prototype.draw = function(ctx) {
 
 function Spawner() {
   this.frame = 0
-  this.threshold = 210
+  this.threshold = 220
 }
 
 Spawner.prototype.physics = function() {
@@ -161,21 +161,21 @@ Player.prototype.physics = function(dx, dy, dr) {
   this.rot += dr
 
    if (this.weapon === 0) {
-    this.cooldown--
-    if (this.cooldown <= 0) {
-      this.cooldown = 10
-      var speed = 5
-      var size = 15
-      GAME.bullets.push(new Bullet({
-        x:this.x, y:this.y, size:size, rot:this.rot, speed:speed
-      }))
-      GAME.bullets.push(new Bullet({
-        x:this.x, y:this.y, size:size, rot:this.rot+2, speed:speed
-      }))
-      GAME.bullets.push(new Bullet({
-        x:this.x, y:this.y, size:size, rot:this.rot-2, speed:speed
-      }))
-    }
+     this.cooldown--
+     if (this.cooldown <= 0) {
+       this.cooldown = 10
+       var speed = 5
+       var size = 15
+       GAME.bullets.push(new Bullet({
+         x:this.x, y:this.y, size:size, rot:this.rot, speed:speed
+       }))
+       GAME.bullets.push(new Bullet({
+         x:this.x, y:this.y, size:size, rot:this.rot+2, speed:speed
+       }))
+       GAME.bullets.push(new Bullet({
+         x:this.x, y:this.y, size:size, rot:this.rot-2, speed:speed
+       }))
+     }
   }
 }
 
@@ -242,21 +242,16 @@ function animate() {
     var enemy = GAME.enemies[i]
     enemy.physics()
     if(collide(enemy, GAME.player)){
-      setTimeout((function(enemy, i){
-        return function() {
-          enemy.size -= 1
-        }
-      })(enemy), 200)
-
+      enemy.size -= .8
       GAME.score -= 400
     }
 
     for(var j=GAME.bullets.length-1; j>=0; j--){
       var collided = collide(enemy, GAME.bullets[j])
       if(collided){
-        enemy.size -= 1
-        if(enemy.size < 20) enemy.size = 0
-        GAME.bullets[j].speed /= 1.08
+        enemy.size -= .5
+        if(enemy.size < 15) enemy.size = 0
+        GAME.bullets[j].speed = Math.max(2, GAME.bullets[j].speed/1.1)
         GAME.score += 20
       }
     }
