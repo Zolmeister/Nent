@@ -25,21 +25,21 @@ GAME = {
 function init() {
   // add canvas
   GAME.canv = document.createElement('canvas')
-  GAME.w = 400 //window.innerWidth
-  GAME.h = 200 //window.innerHeight
+  GAME.w = 400*2 //window.innerWidth
+  GAME.h = 200*2 //window.innerHeight
   GAME.canv.width = GAME.w
   GAME.canv.height = GAME.h
 
   GAME.ctx = GAME.canv.getContext('2d')
 
   GAME.outCanv = document.createElement('canvas')
-  GAME.outCanv.width = GAME.w
-  GAME.outCanv.height = GAME.h
+  GAME.outCanv.width = GAME.w/2
+  GAME.outCanv.height = GAME.h/2
   GAME.outCtx = GAME.outCanv.getContext('2d')
   document.body.appendChild(GAME.outCanv)
 
   GAME.player = new Player({
-    x:GAME.w/2, y:GAME.h/2, size:25, weapon:0
+    x:GAME.w/2, y:GAME.h/2, size:50, weapon:0
   })
 
   GAME.spawner = new Spawner()
@@ -65,9 +65,13 @@ var randColor = (function() {
     var rM = (i%3==0?1:0)
     var gM = (i%3==1?1:0)
     var bM = (i%3==2?1:0)
-    var r = 25 + Math.random()*30 + 150*rM+Math.random()*100*rM
-    var g = 25 + Math.random()*30 +150*gM+Math.random()*100*gM
-    var b = 25 + Math.random()*30 + 150*bM+Math.random()*100*bM
+    var solidM = 15
+    var solidD = 150
+    var deltaM = 100
+    var deltaD = 100
+    var r = solidM + Math.random()*solidD + deltaM*rM+Math.random()*deltaD*rM
+    var g = solidM + Math.random()*solidD + deltaM*gM+Math.random()*deltaD*gM
+    var b = solidM + Math.random()*solidD + deltaM*bM+Math.random()*deltaD*bM
     return new Color().rgb(r,g,b)
   }
 })()
@@ -138,7 +142,7 @@ Spawner.prototype.spawn = function() {
   }
 
   GAME.enemies.push(new Enemy({
-    x:x, y:y, size:20, speed:5, target: GAME.player
+    x:x, y:y, size:40, speed:5, target: GAME.player
   }))
 }
 
@@ -301,7 +305,7 @@ function distance(a, b) {
 
 function animate() {
   requestAnimationFrame(animate)
-  GAME.outCtx.fillStyle = '#111'
+  GAME.outCtx.fillStyle = '#090909'
   GAME.ctx.clearRect(0, 0, GAME.w, GAME.h)
   GAME.outCtx.fillRect(0, 0, GAME.w, GAME.h)
 
@@ -310,7 +314,7 @@ function animate() {
     var enemy = GAME.enemies[i]
     enemy.physics()
     if(collide(enemy, GAME.player)){
-      enemy.size -= .25
+      enemy.size -= .4
     }
 
     /*for(var j=GAME.bullets.length-1; j>=0; j--){
@@ -346,7 +350,7 @@ function animate() {
   GAME.player.draw(GAME.ctx)
   GAME.spawner.draw(GAME.ctx)
 
-  GAME.outCtx.drawImage(GAME.canv, 0, 0)
+  GAME.outCtx.drawImage(GAME.canv, 0, 0, GAME.w, GAME.h, 0, 0, GAME.outCanv.width, GAME.outCanv.height)
   GAME.outCtx.font = '16px Monospace bold'
   GAME.outCtx.fillStyle = '#cff'
   GAME.outCtx.fillText(GAME.score, 30, 16)
