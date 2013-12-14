@@ -39,9 +39,10 @@ function init() {
   document.body.appendChild(GAME.outCanv)
 
   GAME.player = new Player({
-    x:GAME.w/2, y:GAME.h/2, size:50, weapon:0
+    x:GAME.w/2, y:GAME.h/2, size:50, rot:.1, weapon: 1
   })
 
+  GAME.ctx.lineCap = 'round'
   GAME.spawner = new Spawner()
   requestAnimationFrame(animate)
 }
@@ -145,6 +146,12 @@ function Player(config) {
   Entity.call(this, config)
   this.weapon = config.weapon || 0
   this.cooldown = 0
+  this.arm = []
+  if(this.weapon === 1) {
+    for(var i=0;i<16;i++){
+      this.arm.push(new Entity({x: this.x, y:this.y, size: 12}))
+    }
+  }
 }
 Player.prototype = Object.create(Entity.prototype)
 
@@ -160,22 +167,37 @@ Player.prototype.physics = function(dx, dy, dr) {
   }
   this.rot += dr
 
-   if (this.weapon === 0) {
-     this.cooldown--
-     if (this.cooldown <= 0) {
-       this.cooldown = 10
-       var speed = 5
-       var size = 15
-       GAME.bullets.push(new Bullet({
-         x:this.x, y:this.y, size:size, rot:this.rot, speed:speed
-       }))
-       GAME.bullets.push(new Bullet({
-         x:this.x, y:this.y, size:size, rot:this.rot+2, speed:speed
-       }))
-       GAME.bullets.push(new Bullet({
-         x:this.x, y:this.y, size:size, rot:this.rot-2, speed:speed
-       }))
-     }
+  if (this.weapon === 0) {
+    this.cooldown--
+    if (this.cooldown <= 0) {
+      this.cooldown = 10
+      var speed = 5
+      var size = 15
+      GAME.bullets.push(new Bullet({
+        x:this.x, y:this.y, size:size, rot:this.rot, speed:speed
+      }))
+      GAME.bullets.push(new Bullet({
+        x:this.x, y:this.y, size:size, rot:this.rot+2, speed:speed
+      }))
+      GAME.bullets.push(new Bullet({
+        x:this.x, y:this.y, size:size, rot:this.rot-2, speed:speed
+      }))
+    }
+  }
+  if (this.weapon === 1) {
+    for(var i=0;i<this.arm.length;i++) {
+      var rDelta = this.i
+      var tx = Math.cos(this.rot)
+      var ty = Math.sin(this.rot)
+      var p = i-this.arm.length/2
+
+      var sign = p < 0 ? -1 : 1
+
+      this.rot+=Math.PI/20*sign*Math.sin(GAME.spawner.frame/100)
+      this.arm[i].x = this.x+28*p*tx
+      this.arm[i].y = this.y+28*p*ty
+    }
+
   }
 }
 
@@ -194,32 +216,13 @@ Player.prototype.draw = function(ctx) {
     ctx.stroke()
   }
   else if(this.weapon === 1) {
-    // draw arms
-    var tx = Math.cos(this.rot)
-    var ty = Math.sin(this.rot)
 
-    ctx.beginPath()
-    ctx.moveTo(this.x+this.size*Math.cos(this.rot), this.y+this.size*Math.sin(this.rot))
-    ctx.lineTo(this.x+300*Math.cos(this.rot), this.y+300*Math.sin(this.rot))
-    ctx.closePath()
-    ctx.lineWidth = 5
-    ctx.strokeStyle= 'rgba(55,55,255,1)'
-    ctx.stroke()
-
-    /*var c1xy = rot(500, 0, this.rot)
-    var c2xy = rot(0, -40, this.rot)
-    ctx.bezierCurveTo(this.x-c1xy[0], this.y-c1xy[1],this.x-c2xy[0], this.y-c2xy[1], this.x, this.y)
-    ctx.bezierCurveTo(this.x+c1xy[0], this.y+c1xy[1],this.x+c2xy[0], this.y+c2xy[1], this.x, this.y)*/
-    //ctx.quadraticCurveTo(this.x-120*tx, this.y-70*ty, this.x-150*tx, this.y-150*ty)
-    //ctx.quadraticCurveTo(this.x-180*tx, this.y-40*ty, this.x, this.y)
-    //ctx.lineTo(this.x, this.y)
-
-    /*ctx.beginPath()
-    ctx.moveTo(this.x+this.size*Math.cos(this.rot), this.y+this.size*Math.sin(this.rot))
-    ctx.lineTo(this.x+300*Math.cos(this.rot), this.y+300*Math.sin(this.rot))
-    ctx.lineWidth = 20
-    ctx.strokeStyle= 'rgba(55,55,255,.8)'
-    ctx.stroke()*/
+    // arms are made up of points
+    for(var i=0;i<this.arm.length;i++) {
+      var p = i-this.arm.length/2
+      if(p <= 1 && p >=-1) continue
+      this.arm[i].draw(ctx)
+    }
 
 
   }
@@ -244,6 +247,15 @@ function animate() {
     if(collide(enemy, GAME.player)){
       enemy.size -= .8
       GAME.score -= 400
+    }
+
+    for(var j=GAME.player.arm.length-1; j>=0; j--) {
+      var collided = collide(enemy, GAME.player.arm[j])
+      if(collided){
+        enemy.size -= .5
+        if(enemy.size < 15) enemy.size = 0
+        GAME.score += 20
+      }
     }
 
     for(var j=GAME.bullets.length-1; j>=0; j--){
