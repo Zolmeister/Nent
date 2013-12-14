@@ -272,7 +272,10 @@ function animate() {
   GAME.player.draw(GAME.ctx)
   GAME.spawner.draw(GAME.ctx)
 
-
+  GAME.outCtx.drawImage(GAME.canv, 0, 0)
+  GAME.outCtx.font = '16px Monospace bold'
+  GAME.outCtx.fillStyle = '#cff'
+  GAME.outCtx.fillText(GAME.score, 30, 16)
 }
 
 $(init)
