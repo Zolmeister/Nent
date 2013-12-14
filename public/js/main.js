@@ -38,8 +38,7 @@ function init() {
   GAME.outCtx = GAME.outCanv.getContext('2d')
   document.body.appendChild(GAME.outCanv)
 
-
-  GAME.player = new Player(GAME.w/2, GAME.h/2, 20, 0, 0)
+  GAME.player = new Player(GAME.w/2, GAME.h/2, 20, 0, 0, 0, 0)
   GAME.spawner = new Spawner()
   requestAnimationFrame(animate)
 }
@@ -183,6 +182,43 @@ Player.prototype.physics = function(dx, dy, dr) {
     }
   }
 }
+
+Player.prototype.draw = function(ctx) {
+  Entity.prototype.draw.call(this, ctx)
+  if(this.weapon === 1) {
+    // draw arms
+    var length = 10
+    var grad = ctx.createRadialGradient(this.x, this.y, 1, this.x, this.y, this.size+50)
+    grad.addColorStop(0, 'rgba(55,55,255,1)')
+    grad.addColorStop(1, 'rgba(55,55,255,0)')
+
+
+    var tx = Math.cos(this.rot)
+    var ty = Math.sin(this.rot)
+
+    ctx.beginPath()
+    ctx.moveTo(this.x, this.y)
+    var c1xy = rot(500, 0, this.rot)
+    var c2xy = rot(0, -40, this.rot)
+    ctx.bezierCurveTo(this.x-c1xy[0], this.y-c1xy[1],this.x-c2xy[0], this.y-c2xy[1], this.x, this.y)
+    ctx.bezierCurveTo(this.x+c1xy[0], this.y+c1xy[1],this.x+c2xy[0], this.y+c2xy[1], this.x, this.y)
+    //ctx.quadraticCurveTo(this.x-120*tx, this.y-70*ty, this.x-150*tx, this.y-150*ty)
+    //ctx.quadraticCurveTo(this.x-180*tx, this.y-40*ty, this.x, this.y)
+    //ctx.lineTo(this.x, this.y)
+    ctx.fillStyle= 'rgba(55,55,255,1)'
+    ctx.fill()
+    ctx.closePath()
+  }
+}
+
+function rot(x, y, dir) {
+  /*var rotationMatrix = [
+    [Math.cos(dir), -Math.sin(dir)],
+    [Math.sin(dir), Math.cos(dir)]
+  ]*/
+  return [Math.cos(dir)*x - Math.sin(dir)*y, Math.sin(dir)*x + Math.cos(dir)*y]
+}
+
 
 function Bullet(x, y, size, rot, vx, vy) {
   Entity.call(this, x, y, size, rot, vx, vy)
