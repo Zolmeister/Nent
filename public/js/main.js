@@ -39,7 +39,7 @@ function init() {
   document.body.appendChild(GAME.outCanv)
 
   GAME.player = new Player({
-    x:GAME.w/2, y:GAME.h/2, size:50, weapon:0
+    x:GAME.w/2, y:GAME.h/2, size:50, weapon:1
   })
 
   GAME.spawner = new Spawner()
@@ -55,65 +55,45 @@ function Entity(config) {
   this.rot = config.rot || 0
   this.speed = config.speed || 0
   this.color = config.color || randColor()
-
+  this.colorBg = new Color(this.color.rgbaString()).alpha(.1)
+  this.color.lighten(0.2)
 }
-
-var randColor = (function() {
-  var i = 0
-  return function() {
-    i++
-    var rM = (i%3==0?1:0)
-    var gM = (i%3==1?1:0)
-    var bM = (i%3==2?1:0)
-    var solidM = 15
-    var solidD = 150
-    var deltaM = 100
-    var deltaD = 100
-    var r = solidM + Math.random()*solidD + deltaM*rM+Math.random()*deltaD*rM
-    var g = solidM + Math.random()*solidD + deltaM*gM+Math.random()*deltaD*gM
-    var b = solidM + Math.random()*solidD + deltaM*bM+Math.random()*deltaD*bM
-    return new Color().rgb(r,g,b)
-  }
-})()
 
 Entity.prototype.physics = function() {
   this.x += this.speed * Math.cos(this.rot)
   this.y += this.speed * Math.sin(this.rot)
 }
 
-function getGradient(ctx, x, y, size, color ) {
-  //var cX = Math.abs(this.x + Math.cos(this.rot)/2)
-  //var cY = Math.abs(this.y + Math.sin(this.rot)/2)
-  if(x <= 0) x = 1
-  if(y <= 0) y = 1
-  var grad = ctx.createRadialGradient(x, y, 1, x, y, size)
-  /*var alpha = function(alpha) {
-    return 'rgba('+r+','+g+','+b+','+alpha+')'
-  }*/
-  grad.addColorStop(0, color.alpha(.4).rgbaString())
-  grad.addColorStop(0.4, color.alpha(.4).rgbaString())
-  grad.addColorStop(.7, color.alpha(1).rgbaString())
-  grad.addColorStop(1, color.alpha(0).rgbaString())
-  return grad
-}
-
 Entity.prototype.draw = function(ctx) {
   if(this.size <= 0) return;
 
+  //ctx.shadowBlur = 10
+  //ctx.shadowColor = this.color.rgbString()
 
-  ctx.fillStyle = getGradient(ctx, this.x, this.y, this.size, this.color) //'#008080'
+  ctx.fillStyle = getGradient(ctx, this.x, this.y, this.size*2.1, this.color, this.opacity)
   ctx.beginPath()
-  ctx.arc(this.x, this.y, this.size, 0, Math.PI*2, true)
+  ctx.arc(this.x, this.y, this.size*2.1, 0, Math.PI*2, true)
   ctx.closePath()
+  // ctx.lineWidth = 100
+  // ctx.strokeStyle = this.color.rgbaString()
   ctx.fill()
+
 
   if(debug) {
     ctx.beginPath()
     ctx.moveTo(this.x, this.y)
-    ctx.lineTo(this.x+10*Math.cos(this.rot), this.y+10*Math.sin(this.rot))
+    ctx.lineTo(this.x+this.size*Math.cos(this.rot), this.y+this.size*Math.sin(this.rot))
     ctx.closePath()
     ctx.stroke()
   }
+}
+
+Entity.prototype.drawBg = function(ctx) { return
+  ctx.beginPath()
+  ctx.arc(this.x, this.y, this.size + 10, 0, Math.PI*2, true)
+  ctx.fillStyle = this.colorBg.rgbaString()
+  ctx.fill()
+  ctx.closePath()
 }
 
 function Spawner() {
@@ -152,17 +132,13 @@ Spawner.prototype.draw = function(ctx) {
   var pix = data.data
   for(var i=0, l=pix.length; i<l; i+=4) {
     if(pix[i+3] < this.threshold) {
-      pix[i+3] /= 4
+      pix[i+3] /= 6
       if(pix[i+3] > this.threshold/4) {
         pix[i+3] = 0
       }
     }
   }
   ctx.putImageData(data, 0, 0)
-}
-
-function dirTowards(to, from) {
-  return Math.atan2(to.y-from.y, to.x-from.x)
 }
 
 function Enemy(config) {
@@ -175,14 +151,6 @@ Enemy.prototype.physics = function() {
   var dir = dirTowards(this.target, this)
   this.x += 1*Math.cos(dir)
   this.y += Math.sin(dir)
-}
-
-Enemy.prototype.draw = function(ctx) {
-  ctx.beginPath()
-  ctx.fillStyle = getGradient(ctx, this.x, this.y, this.size, this.color)
-  ctx.arc(this.x, this.y, this.size, 0, Math.PI*2)
-  ctx.closePath()
-  ctx.fill()
 }
 
 
@@ -240,39 +208,35 @@ Player.prototype.draw = function(ctx) {
   }
   else if(this.weapon === 1) {
     // draw arms
-    var length = 10
-    var grad = ctx.createRadialGradient(this.x, this.y, 1, this.x, this.y, this.size+50)
-    grad.addColorStop(0, 'rgba(55,55,255,0)')
-    grad.addColorStop(.5, 'rgba(55,55,255,1)')
-    grad.addColorStop(1, 'rgba(55,55,255,0)')
-
-
     var tx = Math.cos(this.rot)
     var ty = Math.sin(this.rot)
 
     ctx.beginPath()
-    ctx.moveTo(this.x, this.y)
-    var c1xy = rot(500, 0, this.rot)
+    ctx.moveTo(this.x+this.size*Math.cos(this.rot), this.y+this.size*Math.sin(this.rot))
+    ctx.lineTo(this.x+300*Math.cos(this.rot), this.y+300*Math.sin(this.rot))
+    ctx.closePath()
+    ctx.lineWidth = 5
+    ctx.strokeStyle= 'rgba(55,55,255,1)'
+    ctx.stroke()
+
+    /*var c1xy = rot(500, 0, this.rot)
     var c2xy = rot(0, -40, this.rot)
     ctx.bezierCurveTo(this.x-c1xy[0], this.y-c1xy[1],this.x-c2xy[0], this.y-c2xy[1], this.x, this.y)
-    ctx.bezierCurveTo(this.x+c1xy[0], this.y+c1xy[1],this.x+c2xy[0], this.y+c2xy[1], this.x, this.y)
+    ctx.bezierCurveTo(this.x+c1xy[0], this.y+c1xy[1],this.x+c2xy[0], this.y+c2xy[1], this.x, this.y)*/
     //ctx.quadraticCurveTo(this.x-120*tx, this.y-70*ty, this.x-150*tx, this.y-150*ty)
     //ctx.quadraticCurveTo(this.x-180*tx, this.y-40*ty, this.x, this.y)
     //ctx.lineTo(this.x, this.y)
-    ctx.fillStyle= 'rgba(55,55,255,1)'
-    ctx.fill()
-    ctx.closePath()
+
+    /*ctx.beginPath()
+    ctx.moveTo(this.x+this.size*Math.cos(this.rot), this.y+this.size*Math.sin(this.rot))
+    ctx.lineTo(this.x+300*Math.cos(this.rot), this.y+300*Math.sin(this.rot))
+    ctx.lineWidth = 20
+    ctx.strokeStyle= 'rgba(55,55,255,.8)'
+    ctx.stroke()*/
+
+
   }
 }
-
-function rot(x, y, dir) {
-  /*var rotationMatrix = [
-    [Math.cos(dir), -Math.sin(dir)],
-    [Math.sin(dir), Math.cos(dir)]
-  ]*/
-  return [Math.cos(dir)*x - Math.sin(dir)*y, Math.sin(dir)*x + Math.cos(dir)*y]
-}
-
 
 function Bullet(x, y, size, rot, speed) {
   Entity.call(this, x, y, size, rot, speed)
@@ -299,22 +263,6 @@ Bullet.prototype = Object.create(Entity.prototype)
   this.y += this.vy * Math.sin(this.rot)
 }*/
 
-function outSize(enemy, x,y,w,h) {
-  if (enemy.x - enemy.size < x || enemy.x + enemy.size > w+100 ||
-        enemy.y - enemy.size < y || enemy.y + enemy.size > h+100) {
-      return true
-    }
-  return false
-}
-
-function collide(a, b) {
-  return distance(a, b) <= a.size //+ b.size
-}
-
-function distance(a, b) {
-  return Math.sqrt(Math.pow(a.x-b.x, 2) + Math.pow(a.y - b.y, 2))
-}
-
 function animate() {
   requestAnimationFrame(animate)
   GAME.outCtx.fillStyle = '#090909'
@@ -326,7 +274,12 @@ function animate() {
     var enemy = GAME.enemies[i]
     enemy.physics()
     if(collide(enemy, GAME.player)){
-      enemy.size -= .4
+      setTimeout((function(enemy, i){
+        return function() {
+          enemy.size -= 1
+        }
+      })(enemy), 200)
+
       GAME.score -= 400
     }
 
@@ -361,6 +314,11 @@ function animate() {
 
   GAME.player.draw(GAME.ctx)
   GAME.spawner.draw(GAME.ctx)
+
+  GAME.player.drawBg(GAME.ctx)
+  for(var i=GAME.enemies.length-1; i>=0; i--){
+    GAME.enemies[i].drawBg(GAME.ctx)
+  }
 
   GAME.outCtx.drawImage(GAME.canv, 0, 0, GAME.w, GAME.h, 0, 0, GAME.outCanv.width, GAME.outCanv.height)
   GAME.outCtx.font = '16px Monospace bold'
