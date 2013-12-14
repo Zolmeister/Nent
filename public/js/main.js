@@ -1,4 +1,4 @@
-debug = true
+debug = false
 GAME = {
   moveKeys: {
     65: [-1, null], //'left',
@@ -205,12 +205,12 @@ Player.prototype.physics = function(dx, dy, dr) {
   }
   this.rot += dr
 
-   if (this.weapon === 0) { return
+   if (this.weapon === 0) {
     this.cooldown--
     if (this.cooldown <= 0) {
       this.cooldown = 10
       var speed = 5
-      var size = 10
+      var size = 15
       GAME.bullets.push(new Bullet({
         x:this.x, y:this.y, size:size, rot:this.rot, speed:speed
       }))
@@ -226,7 +226,19 @@ Player.prototype.physics = function(dx, dy, dr) {
 
 Player.prototype.draw = function(ctx) {
   Entity.prototype.draw.call(this, ctx)
-  if(this.weapon === 1) {
+  if(this.weapon === 0) {
+    ctx.lineWidth = 5
+    ctx.strokeStyle = this.color.hexString()
+    ctx.beginPath()
+    ctx.moveTo(this.x, this.y)
+    ctx.lineTo(this.x+this.size/2*Math.cos(this.rot), this.y+this.size/2*Math.sin(this.rot))
+    ctx.moveTo(this.x, this.y)
+    ctx.lineTo(this.x+this.size/2*Math.cos(this.rot+2), this.y+this.size/2*Math.sin(this.rot+2))
+    ctx.moveTo(this.x, this.y)
+    ctx.lineTo(this.x+this.size/2*Math.cos(this.rot-2), this.y+this.size/2*Math.sin(this.rot-2))
+    ctx.stroke()
+  }
+  else if(this.weapon === 1) {
     // draw arms
     var length = 10
     var grad = ctx.createRadialGradient(this.x, this.y, 1, this.x, this.y, this.size+50)
@@ -315,18 +327,18 @@ function animate() {
     enemy.physics()
     if(collide(enemy, GAME.player)){
       enemy.size -= .4
+      GAME.score -= 400
     }
 
-    /*for(var j=GAME.bullets.length-1; j>=0; j--){
+    for(var j=GAME.bullets.length-1; j>=0; j--){
       var collided = collide(enemy, GAME.bullets[j])
-      if(!GAME.bullets[j].used && collided){
+      if(collided){
         enemy.size -= 1
-        GAME.bullets[j].used = true
+        if(enemy.size < 20) enemy.size = 0
+        GAME.bullets[j].speed /= 1.08
         GAME.score += 20
-      } else if(collided) {
-        GAME.bullets[j].size -= 5
       }
-    }*/
+    }
 
     enemy.draw(GAME.ctx)
     if(outSize(enemy, -100, -100, GAME.w + 100, GAME.h + 100) || enemy.size <= 5) {
