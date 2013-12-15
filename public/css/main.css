@@ -3,6 +3,27 @@ body {
   padding: 0;
   background: #222;
 }
+
+h1,h6 {
+  margin-bottom: 1em 0;
+}
+
+.overlay {
+  width: 400px;
+  height: 300px;
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  background: #222;
+  padding: 0 50px;
+  color: #fff;
+  z-index: 99999;
+}
+
+.start-button {
+  background: rgb(28, 184, 65); /* green */
+}
+
 .main-canv {
   background: #111;
 }
