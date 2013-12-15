@@ -7,7 +7,7 @@ Enemy.prototype = Object.create(Entity.prototype)
 
 Enemy.prototype.physics = function() {
   var dir = dirTowards(this.target, this)
-  this.x += 1*Math.cos(dir)
+  this.x += Math.cos(dir)
   this.y += Math.sin(dir)
 }
 
@@ -17,14 +17,7 @@ function Bullet(x, y, size, rot, speed) {
 }
 Bullet.prototype = Object.create(Entity.prototype)
 
-
-function animate(time) {
-  //requestAnimationFrame(animate)
-  //GAME.outCtx.fillStyle = '#090909'
-  //GAME.ctx.fillStyle='#111'
-  GAME.ctx.clearRect(0, 0, GAME.w, GAME.h)
-  //GAME.outCtx.fillRect(0, 0, GAME.w, GAME.h)
-
+function physics() {
   GAME.spawner.physics()
   for(var i=GAME.enemies.length-1; i>=0; i--){
     var enemy = GAME.enemies[i]
@@ -53,36 +46,62 @@ function animate(time) {
       }
     }
 
-    enemy.draw(GAME.ctx)
+
     if(outSize(enemy, -100, -100, GAME.w + 100, GAME.h + 100) || enemy.size <= 5) {
       GAME.enemies.splice(i,1)
       GAME.gold(GAME.gold() + 100)
     }
   }
 
-  GAME.player.physics(GAME.inputX, GAME.inputY, GAME.inputRot)
+  GAME.player.physics(GAME.inputX[0], GAME.inputY[0], GAME.inputRot[0])
+
   for(var i=GAME.bullets.length-1; i>=0; i--){
     var bullet = GAME.bullets[i]
     bullet.physics()
-    bullet.draw(GAME.ctx)
+
     if(outSize(bullet, -100, -100, GAME.w + 100, GAME.h + 100)) {
       GAME.bullets.splice(i,1)
     }
   }
+}
 
+function paint() {
+  GAME.ctx.clearRect(0, 0, GAME.w, GAME.h)
 
+  for(var i=GAME.bullets.length-1; i>=0; i--){
+    var bullet = GAME.bullets[i]
+    bullet.draw(GAME.ctx)
+  }
+  for(var i=GAME.enemies.length-1; i>=0; i--) {
+    var enemy = GAME.enemies[i]
+    enemy.draw(GAME.ctx)
+  }
 
   GAME.player.draw(GAME.ctx)
   GAME.spawner.draw(GAME.ctx)
+}
 
+var MS_PER_UPDATE = 18
+var lag = 0.0
+var previousTime = 0.0
 
+function animate(time) {
 
-  // clear gold
-  /*GAME.hudCtx.clearRect(30, 5, 120, 20)
-  GAME.hudCtx.clearRect(30, 5, 1200, 200)
+  lag += time-previousTime
+  previousTime = time
 
-  GAME.hudCtx.fillText('gold: ' + GAME.gold, 30, 20)
-  */
+  var MAX_CYCLES = 20
+  while (lag >= MS_PER_UPDATE && MAX_CYCLES) {
+    physics()
+    lag -= MS_PER_UPDATE
+    MAX_CYCLES--
+  }
+
+  if(lag/MS_PER_UPDATE > 75) {
+    lag = 0.0
+  }
+
+  paint()
 
   var tLeft = GAME.timer - time
   if (tLeft < 0) {
@@ -96,7 +115,6 @@ function animate(time) {
   var ms = Math.floor(tLeft / 10) % 100
   ms = ms < 10 ? '0'+ms : ms
   GAME.$time.text('00:'+sec+':'+ms)
-  //GAME.hudCtx.fillText('Time: 00:' + sec + ':' + ms, 50, 50)
 }
 
 

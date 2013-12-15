@@ -4,16 +4,17 @@ window.onkeydown = function(e) {
   if(Object.keys(GAME.moveKeys).indexOf(''+e.which) !== -1) {
     var dir = GAME.moveKeys[e.which]
 
-    if(dir[0]) {
-      GAME.inputX = dir[0]
+    if(dir[0] && GAME.inputX.indexOf(dir[0]) === -1) {
+      GAME.inputX.unshift(dir[0])
     }
 
-    if(dir[1]) {
-      GAME.inputY = dir[1]
+    if(dir[1] && GAME.inputY.indexOf(dir[1]) === -1) {
+      GAME.inputY.unshift(dir[1])
     }
 
   } else if (Object.keys(GAME.rotKeys).indexOf(''+e.which) !== -1) {
-    GAME.inputRot = GAME.rotKeys[e.which]
+    if(GAME.inputRot.indexOf(GAME.rotKeys[e.which]) === -1)
+      GAME.inputRot.unshift(GAME.rotKeys[e.which])
   }
   //console.log(GAME.inputX, GAME.inputY, GAME.inputRot)
 }
@@ -22,16 +23,17 @@ window.onkeyup = function(e) {
   if(Object.keys(GAME.moveKeys).indexOf(''+e.which) !== -1) {
     var dir = GAME.moveKeys[e.which]
 
-    if(dir[0] === GAME.inputX) {
-      GAME.inputX = 0
+    if (GAME.inputX.indexOf(dir[0]) !== -1) {
+      GAME.inputX.splice(GAME.inputX.indexOf(dir[0]), 1)
     }
-
-    if(dir[1] === GAME.inputY) {
-      GAME.inputY = 0
+    if (GAME.inputY.indexOf(dir[1]) !== -1) {
+      GAME.inputY.splice(GAME.inputY.indexOf(dir[1]), 1)
     }
 
   } else if (Object.keys(GAME.rotKeys).indexOf(''+e.which) !== -1) {
-    GAME.inputRot = 0
+    if (GAME.inputRot.indexOf(GAME.rotKeys[e.which]) !== -1) {
+      GAME.inputRot.splice(GAME.inputRot.indexOf(GAME.rotKeys[e.which]), 1)
+    }
   }
   //console.log(GAME.inputX, GAME.inputY, GAME.inputRot)
 

@@ -1,7 +1,7 @@
 function Player(config) {
   Entity.call(this, config)
   this.weapon = config.weapon || 0
-  this.reloadTime = config.reloadTime || 22
+  this.reloadTime = config.reloadTime || 18
   this.damage = config.damage || 10
   this.guns = config.guns || 1
   this.cooldown = 0
@@ -16,21 +16,36 @@ Player.prototype = Object.create(Entity.prototype)
 
 Player.prototype.physics = function(dx, dy, dr) {
   // TODO: fix player movement to be constant speed, intead of faster diagonals
-  this.x += dx
-  this.y += dy
+  var deltaX = 0
+  var deltaY = 0
+  if(dx && dy) {
+    deltaX += Math.sqrt(2)/2 * this.speed * dx
+    deltaY += Math.sqrt(2)/2 * this.speed * dy
+  } else if (dx) {
+    deltaX += this.speed * dx
+  } else if (dy) {
+    deltaY += this.speed * dy
+  }
+
+  this.x += deltaX
+  this.y += deltaY
+
   if(this.x - this.size < 0 || this.x+this.size > GAME.w){
-    this.x -= dx
+    this.x -= deltaX
   }
+
   if(this.y - this.size < 0 || this.y+this.size > GAME.h){
-    this.y -= dy
+    this.y -= deltaY
   }
-  this.rot += dr
+
+  if(dr)
+    this.rot += dr
 
   if (this.weapon === 0) {
     this.cooldown--
     if (this.cooldown <= 0) {
       this.cooldown = this.reloadTime
-      var speed = 2
+      var speed = 4
       var size = this.damage
       _.each([this.rot, this.rot+2, this.rot-2].slice(0, this.guns),function(rot) {
         var x = this.x + Math.cos(rot) * speed * 8
@@ -87,7 +102,7 @@ Player.prototype.draw = function(ctx) {
 
 Player.prototype.upgrade = function(type) {
   if(type === 'speed') {
-    this.speed += 1
+    this.speed += .25
   } else if(type === 'rate') {
     this.reloadTime -= 2
   } else if(type === 'damage') {
