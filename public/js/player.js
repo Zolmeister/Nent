@@ -28,18 +28,16 @@ Player.prototype.physics = function(dx, dy, dr) {
   if (this.weapon === 0) {
     this.cooldown--
     if (this.cooldown <= 0) {
-      this.cooldown = 10
-      var speed = 5
-      var size = 15
-      GAME.bullets.push(new Bullet({
-        x:this.x, y:this.y, size:size, rot:this.rot, speed:speed
-      }))
-      GAME.bullets.push(new Bullet({
-        x:this.x, y:this.y, size:size, rot:this.rot+2, speed:speed
-      }))
-      GAME.bullets.push(new Bullet({
-        x:this.x, y:this.y, size:size, rot:this.rot-2, speed:speed
-      }))
+      this.cooldown = 15
+      var speed = 2
+      var size = 10
+      _.each([this.rot, this.rot+2, this.rot-2],function(rot) {
+        var x = this.x + Math.cos(rot) * speed * 8
+        var y = this.y + Math.sin(rot) * speed * 8
+        GAME.bullets.push(new Bullet({
+          x: x, y:y, size:size, rot:rot, speed:speed
+        }))
+      }.bind(this))
     }
   }
   if (this.weapon === 1) {

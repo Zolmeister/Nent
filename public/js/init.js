@@ -41,7 +41,7 @@ function init() {
   //document.body.appendChild(GAME.canv)
 
   GAME.player = new Player({
-    x:GAME.w/2, y:GAME.h/2, size:50, rot:.1, weapon: 0, speed: 5
+    x:GAME.w/2, y:GAME.h/2, size:25, rot:.1, weapon: 0, speed: 5
   })
 
   GAME.spawner = new Spawner()

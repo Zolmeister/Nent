@@ -24,7 +24,7 @@ Spawner.prototype.spawn = function() {
   }
 
   GAME.enemies.push(new Enemy({
-    x:x, y:y, size:40, speed:5, target: GAME.player
+    x:x, y:y, size:20, speed:5, target: GAME.player
   }))
 }
 

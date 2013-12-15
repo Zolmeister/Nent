@@ -1,5 +1,8 @@
 body {
   margin: 0;
   padding: 0;
+  background: #222;
+}
+canvas {
   background: #111;
 }
