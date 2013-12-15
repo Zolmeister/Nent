@@ -24,7 +24,7 @@ function physics() {
     enemy.physics()
     if(collide(enemy, GAME.player)){
       enemy.size -= .8 / enemy.toughness
-      GAME.gold(GAME.gold() - 100)
+      GAME.gold(GAME.gold() - 10)
     }
 
     for(var j=GAME.player.arm.length-1; j>=0; j--) {
@@ -46,10 +46,15 @@ function physics() {
       }
     }
 
-
-    if(outSize(enemy, -100, -100, GAME.w + 100, GAME.h + 100) || enemy.size <= 5) {
+    // none should ever go out of bounds, they should all collide with the player
+    if(/*outSize(enemy, -enemy.size*3, -enemy.size*3, GAME.w + enemy.size*3, GAME.h + enemy.size*3) || */enemy.size <= 5) {
       GAME.enemies.splice(i,1)
       GAME.gold(GAME.gold() + 100)
+
+      if(GAME.bossMode() && GAME.enemies.length === 0) {
+        // game over
+        return  pause()
+      }
     }
   }
 

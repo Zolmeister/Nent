@@ -54,7 +54,7 @@ GAME = {
   upgrades: {
     speed: {
       level: 0,
-      costs: [50, 100, 200, 400, 800],
+      costs: [50, 100, 200, 300, 500],
       action: function() {
         GAME.player.upgrade('speed')
       },
@@ -70,7 +70,7 @@ GAME = {
     },
     damage: {
       level: 0,
-      costs: [150, 300, 600, 1200, 3000],
+      costs: [125, 175, 250, 500, 800],
       action: function() {
         GAME.player.upgrade('damage')
       },
@@ -78,13 +78,14 @@ GAME = {
     },
     gun: {
       level: 0,
-      costs: [1000, 3000, 8000, 12000, 20000],
+      costs: [500, 1000],
       action: function() {
         GAME.player.upgrade('gun')
       },
         active: false
     }
-  }
+  },
+  highScore: 0
 }
 
 function init() {
@@ -143,7 +144,14 @@ function init() {
 
   if(!muted) {
     music.play()
+    $('.audio-toggle').text('mute')
+  } else {
+    $('.audio-toggle').text('un-mute')
   }
+
+  //initialize high score
+  GAME.highScore = parseInt(localStorage.highScore, 10)
+  showHighScore()
 
   // UI bindings
   $('.start-button').on('click', newGame)
@@ -153,8 +161,10 @@ function init() {
     localStorage.muted = muted
     if(muted) {
       music.pause()
+      this.textContent = 'un-mute'
     } else {
       music.play()
+      this.textContent = 'mute'
     }
   })
 
@@ -187,13 +197,30 @@ function init() {
   })
 
   if(debug) {
-    //newGame()
+    newGame()
+  }
+}
+
+function showHighScore() {
+  if(!isNaN(GAME.highScore)) {
+    $('.high-score').text('Best: '+GAME.highScore)
+    $('.high-score').show()
   }
 }
 
 function pause() {
   // TODO: add pause menu
   GAME.glsl.stop()
+  $('.overlay').fadeIn()
+  //GAME.$hud.fadeOut()
+
+  if(!isNaN(GAME.highScore)) {
+    GAME.highScore = Math.max(GAME.highScore, GAME.gold())
+  } else {
+    GAME.highScore = GAME.gold()
+  }
+  localStorage.highScore = GAME.highScore
+  showHighScore()
 }
 
 function unpause() {
@@ -202,12 +229,12 @@ function unpause() {
 
 function newGame() {
   // hide menu
-  $('.overlay').hide()
-  GAME.$hud.show()
+  $('.overlay').fadeOut()
+  GAME.$hud.fadeIn()
 
   // reset all dynamic variables to default state
   GAME.gold(0)
-  GAME.timer = 1000 * 60 // 1 minute in the future
+  GAME.timer = (GAME.glsl._stopTime || 0) + 1000//1000 * 60 // 1 minute in the future
   GAME.bullets = []
   GAME.enemies = []
 

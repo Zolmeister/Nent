@@ -26,17 +26,19 @@ Spawner.prototype.spawn = function(size, speed, toughness) {
   var x, y
   if(Math.random() > .5) {
     // top or bottom side
-    y = Math.random() > .5 ? GAME.h : -20
+    y = Math.random() > .5 ? GAME.h + size * 2 : -size*2
     x = Math.floor(Math.random() * GAME.w)
   } else {
     // left or right size
-    x = Math.random() > .5 ? GAME.w : -20
+    x = Math.random() > .5 ? GAME.w + size * 2: -size*2
     y = Math.floor(Math.random() * GAME.h)
   }
-
-  GAME.enemies.push(new Enemy({
+  var enemy = new Enemy({
     x:x, y:y, size:size, speed:speed, target: GAME.player, toughness: toughness
-  }))
+  })
+
+  GAME.enemies.push(enemy)
+  return enemy
 }
 
 Spawner.prototype.draw = function(ctx) {
@@ -59,5 +61,9 @@ Spawner.prototype.draw = function(ctx) {
 
 Spawner.prototype.enableBossMode = function() {
   this.bossMode = true
-  this.spawn(100, 1.65, 20)
+  /*var boss = this.spawn(100, 1.65, 15)
+  setInterval(function(){
+    boss.speed += 0.05
+    console.log('speed up', boss.speed)
+  }, 5000)*/
 }
