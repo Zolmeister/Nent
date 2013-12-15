@@ -1,4 +1,4 @@
-debug = false
+debug = true
 GAME = {
   moveKeys: {
     65: [-1, null], //'left',
@@ -98,6 +98,10 @@ function init() {
 
   // UI bindings
   $('.start-button').on('click', newGame)
+
+  if(debug) {
+    newGame()
+  }
 }
 
 function pause() {

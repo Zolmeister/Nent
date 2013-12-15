@@ -3,6 +3,7 @@
 function Player(config) {
   Entity.call(this, config)
   this.weapon = config.weapon || 0
+  this.reloadTime = config.reloadTime || 15
   this.cooldown = 0
   this.arm = []
   if(this.weapon === 1) {
@@ -28,7 +29,7 @@ Player.prototype.physics = function(dx, dy, dr) {
   if (this.weapon === 0) {
     this.cooldown--
     if (this.cooldown <= 0) {
-      this.cooldown = 15
+      this.cooldown = this.reloadTime
       var speed = 2
       var size = 10
       _.each([this.rot, this.rot+2, this.rot-2],function(rot) {

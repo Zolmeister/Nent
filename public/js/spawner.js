@@ -13,7 +13,7 @@ Spawner.prototype.physics = function() {
   this.frame++
   if(this.frame % 800 === 0) {
     this.toughness++
-    //console.log('updated toughness', this.toughness)
+    if (debug) console.log('updated toughness', this.toughness)
   }
 
 }

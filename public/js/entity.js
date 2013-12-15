@@ -17,19 +17,9 @@ Entity.prototype.physics = function() {
 Entity.prototype.draw = function(ctx) {
   if(this.size <= 0) return;
 
-
   ctx.fillStyle = getGradient(ctx, this.x, this.y, this.size*2.1, this.color, this.opacity)
   ctx.beginPath()
   ctx.arc(this.x, this.y, this.size*2.1, 0, Math.PI*2, true)
   ctx.closePath()
   ctx.fill()
-
-
-  if(debug) {
-    ctx.beginPath()
-    ctx.moveTo(this.x, this.y)
-    ctx.lineTo(this.x+this.size*Math.cos(this.rot), this.y+this.size*Math.sin(this.rot))
-    ctx.closePath()
-    ctx.stroke()
-  }
 }
