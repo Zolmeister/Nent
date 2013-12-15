@@ -20,7 +20,7 @@ Spawner.prototype.physics = function() {
 
 Spawner.prototype.spawn = function(size, speed, toughness) {
   size = size || 20
-  speed = speed || 5
+  speed = speed || 1
   toughness = toughness || this.toughness
 
   var x, y
@@ -59,5 +59,5 @@ Spawner.prototype.draw = function(ctx) {
 
 Spawner.prototype.enableBossMode = function() {
   this.bossMode = true
-  this.spawn(100, null, 20)
+  this.spawn(100, 1.65, 20)
 }

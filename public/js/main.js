@@ -7,8 +7,8 @@ Enemy.prototype = Object.create(Entity.prototype)
 
 Enemy.prototype.physics = function() {
   var dir = dirTowards(this.target, this)
-  this.x += Math.cos(dir)
-  this.y += Math.sin(dir)
+  this.x += Math.cos(dir) * this.speed
+  this.y += Math.sin(dir) * this.speed
 }
 
 
