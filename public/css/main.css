@@ -46,10 +46,37 @@ h1,h6 {
 }
 .shop {
   clear: left;
-  background: #666;
-  padding: 10px;
+  /*background: #666;*/
+  padding: 6px;
   width: 80px;
 }
 .shop .item {
-  border: 1px solid;
+  padding: 2px;
+  border-radius: 3px;
+  text-align: center;
+  /*border: 1px solid;*/
+  margin-bottom: 10px;
+  opacity: 0.5;
+}
+.shop .item:hover {
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+}
+.shop .available {
+  opacity: 1;
+}
+.item-red {
+  box-shadow: 0 0 4px #df4051;
+}
+.item-green {
+  box-shadow: 0 0 4px #9de970;
+}
+.item-blue {
+  box-shadow: 0 0 4px #54a4c5;
+}
+.item-violet {
+  box-shadow: 0 0 4px #ad2fae;
+}
+.upgrade-title {
+  margin-bottom: 8px;
 }
