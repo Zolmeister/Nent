@@ -28,7 +28,10 @@ Spawner.prototype.spawn = function() {
   }))
 }
 
-Spawner.prototype.draw = function(ctx) { return
+Spawner.prototype.draw = function(ctx) {
+  // This is no logner used, as the processing is done on the GPU via fragment shader
+  return
+
   // metabolize ctx
   var data = ctx.getImageData(0, 0, GAME.w, GAME.h)
   var pix = data.data

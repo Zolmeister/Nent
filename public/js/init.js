@@ -25,7 +25,7 @@ GAME = {
 function init() {
   // add canvas
   GAME.canv = document.createElement('canvas')
-  GAME.w = 800//*2 //window.innerWidth
+  GAME.w = 700//*2 //window.innerWidth
   GAME.h = 500//*2 //window.innerHeight
   GAME.canv.width = GAME.w
   GAME.canv.height = GAME.h
