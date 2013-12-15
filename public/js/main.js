@@ -81,13 +81,16 @@ function animate(time) {
   GAME.hudCtx.clearRect(30, 5, 1200, 200)
 
   GAME.hudCtx.fillText('gold: ' + GAME.gold, 30, 20)
+  */
+
   var tLeft = GAME.timer - time
   if (tLeft < 0) tLeft = 0
   var sec = Math.floor(tLeft / 1000) % 60
   sec = sec < 10 ? '0'+sec : sec
   var ms = Math.floor(tLeft / 10) % 100
   ms = ms < 10 ? '0'+ms : ms
-  GAME.hudCtx.fillText('Time: 00:' + sec + ':' + ms, 50, 50)*/
+  GAME.$timer.textContent = '00:'+sec+':'+ms
+  //GAME.hudCtx.fillText('Time: 00:' + sec + ':' + ms, 50, 50)
 }
 
 

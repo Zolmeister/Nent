@@ -11,7 +11,14 @@ body {
   top: 0;
   left: 0;
   color: #fff;
+  font-family: monospace;
 }
 .gold {
   padding: 10px;
+  float: left;
+}
+.time {
+  padding: 10px;
+  float: right;
+  text-align: right;
 }

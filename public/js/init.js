@@ -24,7 +24,7 @@ GAME = {
     return function(v) {
       if(v == null) return gld
       gld = v
-      GAME.$gold.textContent = 'tots: '+gld
+      GAME.$gold.textContent = 'btc: '+gld
       return gld
     }
   })()
@@ -56,6 +56,9 @@ function init() {
   GAME.$gold = document.createElement('div')
   GAME.$gold.className = 'gold'
   GAME.hud.appendChild(GAME.$gold)
+  GAME.$timer = document.createElement('div')
+  GAME.$timer.className = 'time'
+  GAME.hud.appendChild(GAME.$timer)
 
   GAME.outCanv = document.createElement('canvas')
   GAME.outCanv.width = GAME.w
