@@ -31,7 +31,7 @@ function animate(time) {
     enemy.physics()
     if(collide(enemy, GAME.player)){
       enemy.size -= .8 / enemy.toughness
-      GAME.gold(GAME.gold() - 400)
+      GAME.gold(GAME.gold() - 100)
     }
 
     for(var j=GAME.player.arm.length-1; j>=0; j--) {

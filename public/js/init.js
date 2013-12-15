@@ -25,6 +25,18 @@ GAME = {
       if(v == null) return gld
       gld = v
       GAME.$gold.text('btc: '+gld)
+      for(var key in GAME.upgrades) {
+        var upgrade = GAME.upgrades[key]
+        if(gld >= upgrade.costs[upgrade.level] && !upgrade.active) {
+          // highlight DOM node
+          $('.shop div[data-item=' + key +']').addClass('available')
+          upgrade.active = true
+        } else if (gld < upgrade.costs[upgrade.level] && upgrade.active) {
+          // un-highlight DOM node
+          $('.shop div[data-item=' + key +']').removeClass('available')
+          upgrade.active = false
+        }
+      }
       return gld
     }
   })(),
@@ -38,7 +50,41 @@ GAME = {
         GAME.spawner.enableBossMode()
       }
     }
-  })()
+  })(),
+  upgrades: {
+    speed: {
+      level: 0,
+      costs: [50, 100, 200, 400, 800],
+      action: function() {
+        GAME.player.upgrade('speed')
+      },
+        active: false
+    },
+    rate: {
+      level: 0,
+      costs: [100, 200, 400, 800, 1600],
+      action: function() {
+        GAME.player.upgrade('rate')
+      },
+        active: false
+    },
+    damage: {
+      level: 0,
+      costs: [150, 300, 600, 1200, 3000],
+      action: function() {
+        GAME.player.upgrade('damage')
+      },
+        active: false
+    },
+    gun: {
+      level: 0,
+      costs: [1000, 3000, 8000, 12000, 20000],
+      action: function() {
+        GAME.player.upgrade('gun')
+      },
+        active: false
+    }
+  }
 }
 
 function init() {
@@ -91,6 +137,34 @@ function init() {
 
   // UI bindings
   $('.start-button').on('click', newGame)
+
+  // upgrades
+  $('.shop .item').on('click', function(){
+
+    var item = $(this)
+    var upgrade = GAME.upgrades[item.data('item')]
+    var level = upgrade.level
+
+    if(level >= upgrade.costs.length) return
+
+    var cost = upgrade.costs[level]
+
+    // debug
+    if(GAME.gold() >= cost || true){
+      console.log('upgrading', item.data('item'))
+      GAME.gold(GAME.gold() - cost)
+      upgrade.action()
+      upgrade.level++
+
+      if(upgrade.level >= upgrade.costs.length) {
+        $(this).find('.item-cost').text('Max')
+      } else {
+        $(this).find('.item-cost').text(upgrade.costs[upgrade.level]+' btc')
+      }
+
+    }
+
+  })
 
   if(debug) {
     newGame()

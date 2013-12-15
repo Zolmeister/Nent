@@ -1,9 +1,9 @@
-
-
 function Player(config) {
   Entity.call(this, config)
   this.weapon = config.weapon || 0
-  this.reloadTime = config.reloadTime || 15
+  this.reloadTime = config.reloadTime || 22
+  this.damage = config.damage || 10
+  this.guns = config.guns || 1
   this.cooldown = 0
   this.arm = []
   if(this.weapon === 1) {
@@ -31,8 +31,8 @@ Player.prototype.physics = function(dx, dy, dr) {
     if (this.cooldown <= 0) {
       this.cooldown = this.reloadTime
       var speed = 2
-      var size = 10
-      _.each([this.rot, this.rot+2, this.rot-2],function(rot) {
+      var size = this.damage
+      _.each([this.rot, this.rot+2, this.rot-2].slice(0, this.guns),function(rot) {
         var x = this.x + Math.cos(rot) * speed * 8
         var y = this.y + Math.sin(rot) * speed * 8
         GAME.bullets.push(new Bullet({
@@ -82,5 +82,17 @@ Player.prototype.draw = function(ctx) {
     }
 
 
+  }
+}
+
+Player.prototype.upgrade = function(type) {
+  if(type === 'speed') {
+    this.speed += 1
+  } else if(type === 'rate') {
+    this.reloadTime -= 2
+  } else if(type === 'damage') {
+    this.damage += 1
+  } else if(type === 'gun') {
+    this.guns += 1
   }
 }
