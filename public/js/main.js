@@ -95,7 +95,7 @@ function animate(time) {
   sec = sec < 10 ? '0'+sec : sec
   var ms = Math.floor(tLeft / 10) % 100
   ms = ms < 10 ? '0'+ms : ms
-  GAME.$timer.textContent = '00:'+sec+':'+ms
+  GAME.$time.text('00:'+sec+':'+ms)
   //GAME.hudCtx.fillText('Time: 00:' + sec + ':' + ms, 50, 50)
 }
 

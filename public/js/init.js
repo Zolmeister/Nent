@@ -24,7 +24,7 @@ GAME = {
     return function(v) {
       if(v == null) return gld
       gld = v
-      GAME.$gold.textContent = 'btc: '+gld
+      GAME.$gold.text('btc: '+gld)
       return gld
     }
   })(),
@@ -56,28 +56,21 @@ function init() {
   GAME.ctx.lineCap = 'round'
 
   // initialize head-up display
-  GAME.hud = document.createElement('div')
-  GAME.$hud = $(GAME.hud)
-  GAME.hud.style.width = GAME.w+'px'
-  GAME.hud.style.height = GAME.h+'px'
-  GAME.hud.className = 'hud'
-  GAME.$gold = document.createElement('div')
-  GAME.$gold.className = 'gold'
-  GAME.hud.appendChild(GAME.$gold)
-  GAME.$timer = document.createElement('div')
-  GAME.$timer.className = 'time'
-  GAME.hud.appendChild(GAME.$timer)
-
+  GAME.$hud = $('.hud')
+  GAME.$hud.width(GAME.w)
+  GAME.$hud.height(GAME.h)
+  GAME.$gold = GAME.$hud.find('.gold')
+  GAME.$time = GAME.$hud.find('.time')
 
   // initialize canvas for WebGL rendering (GLSL shaders)
-  GAME.outCanv = document.createElement('canvas')
+  GAME.outCanv = document.getElementById('canv')
   GAME.outCanv.width = GAME.w
   GAME.outCanv.height = GAME.h
   GAME.outCanv.className = 'main-canv'
 
   // add initialized DOM nodes to body
-  document.body.appendChild(GAME.outCanv)
-  document.body.appendChild(GAME.hud)
+  //document.body.appendChild(GAME.outCanv)
+  //document.body.appendChild(GAME.hud)
 
   if (!Glsl.supported()) alert("WebGL is not supported.")
 
@@ -130,7 +123,7 @@ function newGame() {
 
   GAME.spawner = new Spawner()
 
-  unpause()
+  //unpause()
 }
 
 $(init)

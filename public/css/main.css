@@ -44,3 +44,12 @@ h1,h6 {
   float: right;
   text-align: right;
 }
+.shop {
+  clear: left;
+  background: #666;
+  padding: 10px;
+  width: 80px;
+}
+.shop .item {
+  border: 1px solid;
+}
