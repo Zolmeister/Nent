@@ -19,26 +19,43 @@ GAME = {
   inputY: 0,
   bullets: [],
   enemies: [],
-  gold: 0
+  gold: (function(){
+    var gld = 0
+    return function(v) {
+      if(v == null) return gld
+      gld = v
+      GAME.$gold.textContent = 'tots: '+gld
+      return gld
+    }
+  })()
+  // gold: 0,
+  // timer: 0
 }
 
 function init() {
   // add canvas
   GAME.canv = document.createElement('canvas')
-  GAME.hud = document.createElement('canvas')
+  //GAME.hud = document.createElement('canvas')
   GAME.w = 700//*2 //window.innerWidth
   GAME.h = 500//*2 //window.innerHeight
   GAME.canv.width = GAME.w
   GAME.canv.height = GAME.h
-  GAME.hud.width = GAME.w
-  GAME.hud.height = GAME.h
-  GAME.hud.className = 'hud'
+  //GAME.hud.width = GAME.w
+  //GAME.hud.height = GAME.h
+  //GAME.hud.className = 'hud'
 
   GAME.ctx = GAME.canv.getContext('2d')
   GAME.ctx.lineCap = 'round'
-  GAME.hudCtx = GAME.hud.getContext('2d')
-  GAME.hudCtx.fillStyle = '#fff'
-  GAME.hudCtx.font = '16px Monospace'
+  //GAME.hudCtx = GAME.hud.getContext('2d')
+  //GAME.hudCtx.fillStyle = '#fff'
+  //GAME.hudCtx.font = '16px Monospace'
+  GAME.hud = document.createElement('div')
+  GAME.hud.style.width = GAME.w+'px'
+  GAME.hud.style.height = GAME.h+'px'
+  GAME.hud.className = 'hud'
+  GAME.$gold = document.createElement('div')
+  GAME.$gold.className = 'gold'
+  GAME.hud.appendChild(GAME.$gold)
 
   GAME.outCanv = document.createElement('canvas')
   GAME.outCanv.width = GAME.w
@@ -48,6 +65,9 @@ function init() {
   document.body.appendChild(GAME.outCanv)
   document.body.appendChild(GAME.hud)
   //document.body.appendChild(GAME.canv)
+
+  GAME.gold(0)
+  GAME.timer = 1000 * 60 // 1 minute in the future
 
   GAME.player = new Player({
     x:GAME.w/2, y:GAME.h/2, size:25, rot:.1, weapon: 0, speed: 5
@@ -66,7 +86,7 @@ function init() {
     },
     update: function(time, delta) {
       this.set('time', time)
-      animate()
+      animate(time)
       this.sync('canv')
     }
   }).start()

@@ -17,7 +17,7 @@ function Bullet(x, y, size, rot, speed) {
 Bullet.prototype = Object.create(Entity.prototype)
 
 
-function animate() {
+function animate(time) {
   //requestAnimationFrame(animate)
   //GAME.outCtx.fillStyle = '#090909'
   //GAME.ctx.fillStyle='#111'
@@ -55,7 +55,7 @@ function animate() {
     enemy.draw(GAME.ctx)
     if(outSize(enemy, -100, -100, GAME.w + 100, GAME.h + 100) || enemy.size <= 5) {
       GAME.enemies.splice(i,1)
-      GAME.gold += 100
+      GAME.gold(GAME.gold() + 100)
     }
   }
 
@@ -74,12 +74,20 @@ function animate() {
   GAME.player.draw(GAME.ctx)
   GAME.spawner.draw(GAME.ctx)
 
-  //GAME.outCtx.drawImage(GAME.canv, 0, 0, GAME.w, GAME.h, 0, 0, GAME.outCanv.width, GAME.outCanv.height)
-  //GAME.outCtx.font = '16px Monospace bold'
-  //GAME.hudCtx.fillStyle = '#fff'
-  GAME.hudCtx.clearRect(30, 5, 120, 20)
-  //GAME.hudCtx.fillStyle = '#0ff'
-  GAME.hudCtx.fillText('gold: '+GAME.gold, 30, 20)
+
+
+  // clear gold
+  /*GAME.hudCtx.clearRect(30, 5, 120, 20)
+  GAME.hudCtx.clearRect(30, 5, 1200, 200)
+
+  GAME.hudCtx.fillText('gold: ' + GAME.gold, 30, 20)
+  var tLeft = GAME.timer - time
+  if (tLeft < 0) tLeft = 0
+  var sec = Math.floor(tLeft / 1000) % 60
+  sec = sec < 10 ? '0'+sec : sec
+  var ms = Math.floor(tLeft / 10) % 100
+  ms = ms < 10 ? '0'+ms : ms
+  GAME.hudCtx.fillText('Time: 00:' + sec + ':' + ms, 50, 50)*/
 }
 
 

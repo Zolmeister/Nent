@@ -10,4 +10,8 @@ body {
   position: absolute;
   top: 0;
   left: 0;
+  color: #fff;
+}
+.gold {
+  padding: 10px;
 }
