@@ -30,15 +30,15 @@ function animate() {
     enemy.physics()
     if(collide(enemy, GAME.player)){
       enemy.size -= .8
-      GAME.score -= 400
+      //GAME.score -= 400
     }
 
     for(var j=GAME.player.arm.length-1; j>=0; j--) {
       var collided = collide(enemy, GAME.player.arm[j])
       if(collided){
         enemy.size -= .5
-        if(enemy.size < 15) enemy.size = 0
-        GAME.score += 20
+        if(enemy.size < 10) enemy.size = 0
+        //GAME.score += 20
       }
     }
 
@@ -46,16 +46,16 @@ function animate() {
       var collided = collide(enemy, GAME.bullets[j])
       if(collided){
         enemy.size -= .5
-        if(enemy.size < 15) enemy.size = 0
+        if(enemy.size < 10) enemy.size = 0
         GAME.bullets[j].speed = Math.max(2, GAME.bullets[j].speed/1.1)
-        GAME.score += 20
+        //GAME.score += 20
       }
     }
 
     enemy.draw(GAME.ctx)
     if(outSize(enemy, -100, -100, GAME.w + 100, GAME.h + 100) || enemy.size <= 5) {
       GAME.enemies.splice(i,1)
-      GAME.score += 100
+      GAME.gold += 100
     }
   }
 
@@ -76,8 +76,10 @@ function animate() {
 
   //GAME.outCtx.drawImage(GAME.canv, 0, 0, GAME.w, GAME.h, 0, 0, GAME.outCanv.width, GAME.outCanv.height)
   //GAME.outCtx.font = '16px Monospace bold'
-  //GAME.outCtx.fillStyle = '#cff'
-  //GAME.outCtx.fillText(GAME.score, 30, 16)
+  //GAME.hudCtx.fillStyle = '#fff'
+  GAME.hudCtx.clearRect(30, 5, 120, 20)
+  //GAME.hudCtx.fillStyle = '#0ff'
+  GAME.hudCtx.fillText('gold: '+GAME.gold, 30, 20)
 }
 
 

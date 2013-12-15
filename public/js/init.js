@@ -19,25 +19,34 @@ GAME = {
   inputY: 0,
   bullets: [],
   enemies: [],
-  score: 0
+  gold: 0
 }
 
 function init() {
   // add canvas
   GAME.canv = document.createElement('canvas')
+  GAME.hud = document.createElement('canvas')
   GAME.w = 700//*2 //window.innerWidth
   GAME.h = 500//*2 //window.innerHeight
   GAME.canv.width = GAME.w
   GAME.canv.height = GAME.h
+  GAME.hud.width = GAME.w
+  GAME.hud.height = GAME.h
+  GAME.hud.className = 'hud'
 
   GAME.ctx = GAME.canv.getContext('2d')
   GAME.ctx.lineCap = 'round'
+  GAME.hudCtx = GAME.hud.getContext('2d')
+  GAME.hudCtx.fillStyle = '#fff'
+  GAME.hudCtx.font = '16px Monospace'
 
   GAME.outCanv = document.createElement('canvas')
   GAME.outCanv.width = GAME.w
   GAME.outCanv.height = GAME.h
+  GAME.outCanv.className = 'main-canv'
   //GAME.outCtx = GAME.outCanv.getContext('2d')
   document.body.appendChild(GAME.outCanv)
+  document.body.appendChild(GAME.hud)
   //document.body.appendChild(GAME.canv)
 
   GAME.player = new Player({
