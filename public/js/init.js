@@ -135,8 +135,28 @@ function init() {
     }
   })
 
+  // initialize audio
+  var music = new Audio()
+  music.src='/music/ld48.ogg'
+  music.loop = true
+  var muted = localStorage.muted === 'false' ? false : true
+
+  if(!muted) {
+    music.play()
+  }
+
   // UI bindings
   $('.start-button').on('click', newGame)
+
+  $('.audio-toggle').on('click', function(){
+    muted = !muted
+    localStorage.muted = muted
+    if(muted) {
+      music.pause()
+    } else {
+      music.play()
+    }
+  })
 
   // upgrades
   $('.shop .item').on('click', function(){
@@ -167,7 +187,7 @@ function init() {
   })
 
   if(debug) {
-    newGame()
+    //newGame()
   }
 }
 
