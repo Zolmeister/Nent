@@ -61,9 +61,9 @@ Spawner.prototype.draw = function(ctx) {
 
 Spawner.prototype.enableBossMode = function() {
   this.bossMode = true
-  /*var boss = this.spawn(100, 1.65, 15)
+  var boss = this.spawn(100, 1.65, 15)
   setInterval(function(){
     boss.speed += 0.05
     console.log('speed up', boss.speed)
-  }, 5000)*/
+  }, 5000)
 }

@@ -82,11 +82,11 @@ h1,h6 {
 }
 .audio-toggle {
   float: right;
+  cursor: pointer;
 }
 .sub-title {
   font-size: 15px;
   margin-top: -15px;
-  cursor: pointer;
 }
 .high-score {
   float: right;

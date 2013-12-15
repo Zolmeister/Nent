@@ -15,9 +15,9 @@ function Player(config) {
 Player.prototype = Object.create(Entity.prototype)
 
 Player.prototype.physics = function(dx, dy, dr) {
-  // TODO: fix player movement to be constant speed, intead of faster diagonals
   var deltaX = 0
   var deltaY = 0
+
   if(dx && dy) {
     deltaX += Math.sqrt(2)/2 * this.speed * dx
     deltaY += Math.sqrt(2)/2 * this.speed * dy
@@ -29,6 +29,7 @@ Player.prototype.physics = function(dx, dy, dr) {
 
   this.x += deltaX
   this.y += deltaY
+
 
   if(this.x - this.size < 0 || this.x+this.size > GAME.w){
     this.x -= deltaX

@@ -26,16 +26,10 @@ var randColor = (function() {
 
 
 function getGradient(ctx, x, y, size, color ) {
-  //var cX = Math.abs(this.x + Math.cos(this.rot)/2)
-  //var cY = Math.abs(this.y + Math.sin(this.rot)/2)
-  if(x <= 0) x = 1
-  if(y <= 0) y = 1
-  var grad = ctx.createRadialGradient(x, y, 1, x, y, size)
-  /*var alpha = function(alpha) {
-    return 'rgba('+r+','+g+','+b+','+alpha+')'
-  }*/
-  grad.addColorStop(0, color.alpha(0).rgbaString())
 
+  var grad = ctx.createRadialGradient(x, y, 1, x, y, size)
+
+  grad.addColorStop(0, color.alpha(0).rgbaString())
   grad.addColorStop(.4, color.alpha(1).rgbaString())
   grad.addColorStop(1, color.alpha(0).rgbaString())
   return grad

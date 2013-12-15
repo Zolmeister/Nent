@@ -237,6 +237,7 @@ function newGame() {
   GAME.timer = (GAME.glsl._stopTime || 0) + 1000//1000 * 60 // 1 minute in the future
   GAME.bullets = []
   GAME.enemies = []
+  GAME.bossMode(false)
 
   GAME.player = new Player({
     x:GAME.w/2, y:GAME.h/2, size:25, rot:.1, weapon: 0, speed: 2
