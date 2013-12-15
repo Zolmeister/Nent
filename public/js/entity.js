@@ -1,4 +1,3 @@
-
 function Entity(config) {
   //x, y, size, rot, speed, color
   this.x = config.x || 0

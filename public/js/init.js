@@ -140,6 +140,7 @@ function init() {
   var music = new Audio()
   music.src='/music/ld48.ogg'
   music.loop = true
+  music.volume = 0.6
   var muted = localStorage.muted === 'false' ? false : true
 
   if(!muted) {
@@ -197,7 +198,7 @@ function init() {
   })
 
   if(debug) {
-    newGame()
+    //newGame()
   }
 }
 
@@ -212,7 +213,7 @@ function pause() {
   // TODO: add pause menu
   GAME.glsl.stop()
   $('.overlay').fadeIn()
-  //GAME.$hud.fadeOut()
+  GAME.$hud.fadeOut()
 
   if(!isNaN(GAME.highScore)) {
     GAME.highScore = Math.max(GAME.highScore, GAME.gold())
