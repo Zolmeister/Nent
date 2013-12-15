@@ -1,4 +1,4 @@
-debug = true
+debug = false
 GAME = {
   moveKeys: {
     65: [-1, null], //'left',
@@ -62,7 +62,7 @@ GAME = {
     },
     rate: {
       level: 0,
-      costs: [100, 200, 400, 800, 1600],
+      costs: [100, 200, 400, 600, 800],
       action: function() {
         GAME.player.upgrade('rate')
       },
@@ -78,7 +78,7 @@ GAME = {
     },
     gun: {
       level: 0,
-      costs: [500, 1000],
+      costs: [300, 600],
       action: function() {
         GAME.player.upgrade('gun')
       },
@@ -182,7 +182,7 @@ function init() {
 
     // debug
     if(GAME.gold() >= cost){
-      console.log('upgrading', item.data('item'))
+      if(debug) console.log('upgrading', item.data('item'))
       GAME.gold(GAME.gold() - cost)
       upgrade.action()
       upgrade.level++
@@ -235,7 +235,7 @@ function newGame() {
 
   // reset all dynamic variables to default state
   GAME.gold(0)
-  GAME.timer = (GAME.glsl._stopTime || 0) + 1000//1000 * 60 // 1 minute in the future
+  GAME.timer = (GAME.glsl._stopTime || 0) + 1000 * 60 // 1 minute in the future
   GAME.bullets = []
   GAME.enemies = []
   GAME.bossMode(false)

@@ -97,6 +97,7 @@ a {
 .game-title {
   text-align: center;
   margin-bottom: 5px;
+  text-shadow: 0 0 10px #f0f;
 }
 .author {
   text-align: center;

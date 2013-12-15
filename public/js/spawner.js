@@ -3,16 +3,18 @@ function Spawner() {
   this.threshold = 220
   this.toughness = 1
   this.bossMode = false
+  this.speed = 1
 }
 
 Spawner.prototype.physics = function() {
-  if (!this.bossMode  && this.frame % 100 === 0) {
+  if (!this.bossMode  && this.frame % 90 === 0) {
     this.spawn()
   }
 
   this.frame++
   if(this.frame % 800 === 0) {
     this.toughness++
+    this.speed += 0.4
     if (debug) console.log('updated toughness', this.toughness)
   }
 
@@ -20,7 +22,7 @@ Spawner.prototype.physics = function() {
 
 Spawner.prototype.spawn = function(size, speed, toughness) {
   size = size || 20
-  speed = speed || 1
+  speed = speed || this.speed
   toughness = toughness || this.toughness
 
   var x, y
@@ -61,9 +63,9 @@ Spawner.prototype.draw = function(ctx) {
 
 Spawner.prototype.enableBossMode = function() {
   this.bossMode = true
-  var boss = this.spawn(100, 1.65, 15)
+  var boss = this.spawn(100, 1.7, 15)
   setInterval(function(){
-    boss.speed += 0.05
-    console.log('speed up', boss.speed)
+    boss.speed += 0.025
+    if(debug) console.log('speed up', boss.speed)
   }, 5000)
 }

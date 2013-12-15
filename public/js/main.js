@@ -18,7 +18,7 @@ function Bullet(x, y, size, rot, speed) {
 Bullet.prototype = Object.create(Entity.prototype)
 
 function physics() {
-  //GAME.spawner.physics()
+  GAME.spawner.physics()
   for(var i=GAME.enemies.length-1; i>=0; i--){
     var enemy = GAME.enemies[i]
     enemy.physics()
