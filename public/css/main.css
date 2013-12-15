@@ -28,6 +28,7 @@ h1,h6 {
   background: #111;
 }
 .hud {
+  display: none;
   position: absolute;
   top: 0;
   left: 0;

@@ -57,6 +57,7 @@ function init() {
 
   // initialize head-up display
   GAME.hud = document.createElement('div')
+  GAME.$hud = $(GAME.hud)
   GAME.hud.style.width = GAME.w+'px'
   GAME.hud.style.height = GAME.h+'px'
   GAME.hud.className = 'hud'
@@ -111,10 +112,11 @@ function unpause() {
 function newGame() {
   // hide menu
   $('.overlay').hide()
+  GAME.$hud.show()
 
   // reset all dynamic variables to default state
   GAME.gold(0)
-  GAME.timer = 1000 //1000 * 60 // 1 minute in the future
+  GAME.timer = 1000 * 60 // 1 minute in the future
   GAME.bullets = []
   GAME.enemies = []
 

@@ -1,6 +1,7 @@
 function Spawner() {
   this.frame = 0
   this.threshold = 220
+  this.toughness = 1
   this.bossMode = false
 }
 
@@ -10,12 +11,17 @@ Spawner.prototype.physics = function() {
   }
 
   this.frame++
+  if(this.frame % 800 === 0) {
+    this.toughness++
+    //console.log('updated toughness', this.toughness)
+  }
+
 }
 
 Spawner.prototype.spawn = function(size, speed, toughness) {
   size = size || 20
   speed = speed || 5
-  toughness = toughness || 1
+  toughness = toughness || this.toughness
 
   var x, y
   if(Math.random() > .5) {
