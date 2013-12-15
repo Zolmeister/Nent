@@ -1,17 +1,22 @@
 function Spawner() {
   this.frame = 0
   this.threshold = 220
+  this.bossMode = false
 }
 
 Spawner.prototype.physics = function() {
-  if (this.frame % 100 === 0) {
+  if (!this.bossMode  && this.frame % 100 === 0) {
     this.spawn()
   }
 
   this.frame++
 }
 
-Spawner.prototype.spawn = function() {
+Spawner.prototype.spawn = function(size, speed, toughness) {
+  size = size || 20
+  speed = speed || 5
+  toughness = toughness || 1
+
   var x, y
   if(Math.random() > .5) {
     // top or bottom side
@@ -24,7 +29,7 @@ Spawner.prototype.spawn = function() {
   }
 
   GAME.enemies.push(new Enemy({
-    x:x, y:y, size:20, speed:5, target: GAME.player
+    x:x, y:y, size:size, speed:speed, target: GAME.player, toughness: toughness
   }))
 }
 
@@ -44,4 +49,9 @@ Spawner.prototype.draw = function(ctx) {
     }
   }
   ctx.putImageData(data, 0, 0)
+}
+
+Spawner.prototype.enableBossMode = function() {
+  this.bossMode = true
+  this.spawn(100, null, 20)
 }

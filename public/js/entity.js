@@ -7,7 +7,6 @@ function Entity(config) {
   this.rot = config.rot || 0
   this.speed = config.speed || 0
   this.color = config.color || randColor().lighten(0.2)
-
 }
 
 Entity.prototype.physics = function() {

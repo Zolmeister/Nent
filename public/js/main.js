@@ -1,6 +1,7 @@
 function Enemy(config) {
   Entity.call(this, config)
   this.target = config.target
+  this.toughness = config.toughness
 }
 Enemy.prototype = Object.create(Entity.prototype)
 
@@ -45,7 +46,7 @@ function animate(time) {
     for(var j=GAME.bullets.length-1; j>=0; j--){
       var collided = collide(enemy, GAME.bullets[j])
       if(collided){
-        enemy.size -= .5
+        enemy.size -= .5 / enemy.toughness
         if(enemy.size < 10) enemy.size = 0
         GAME.bullets[j].speed = Math.max(2, GAME.bullets[j].speed/1.1)
         //GAME.score += 20
@@ -84,7 +85,12 @@ function animate(time) {
   */
 
   var tLeft = GAME.timer - time
-  if (tLeft < 0) tLeft = 0
+  if (tLeft < 0) {
+    tLeft = 0
+    if (!GAME.bossMode()) {
+      GAME.bossMode(true)
+    }
+  }
   var sec = Math.floor(tLeft / 1000) % 60
   sec = sec < 10 ? '0'+sec : sec
   var ms = Math.floor(tLeft / 10) % 100

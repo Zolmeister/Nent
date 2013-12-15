@@ -28,7 +28,17 @@ GAME = {
       return gld
     }
   })(),
-  timer: 0
+  timer: 0,
+  bossMode: (function() {
+    var mode = false
+    return function(v) {
+      if (v == null) return mode
+      mode = v
+      if(mode) {
+        GAME.spawner.enableBossMode()
+      }
+    }
+  })()
 }
 
 function init() {
@@ -104,7 +114,7 @@ function newGame() {
 
   // reset all dynamic variables to default state
   GAME.gold(0)
-  GAME.timer = 1000 * 60 // 1 minute in the future
+  GAME.timer = 1000 //1000 * 60 // 1 minute in the future
   GAME.bullets = []
   GAME.enemies = []
 
