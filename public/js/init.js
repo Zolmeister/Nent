@@ -229,6 +229,17 @@ function unpause() {
 }
 
 function newGame() {
+
+  for(var key in GAME.upgrades) {
+    GAME.upgrades[key].level = 0
+  }
+
+  $('.shop .item').each(function(el){
+    var $el = $(this)
+    var upgrade = GAME.upgrades[$el.data('item')]
+    $el.find('.item-cost').text(upgrade.costs[upgrade.level]+' btc')
+  })
+
   // hide menu
   $('.overlay').fadeOut()
   GAME.$hud.fadeIn()
@@ -238,6 +249,7 @@ function newGame() {
   GAME.timer = (GAME.glsl._stopTime || 0) + 1000 * 60 // 1 minute in the future
   GAME.bullets = []
   GAME.enemies = []
+
   GAME.bossMode(false)
 
   GAME.player = new Player({
