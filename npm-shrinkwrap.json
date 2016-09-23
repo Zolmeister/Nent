@@ -1,0 +1,267 @@
+{
+  "name": "Nent",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": {
+      "version": "3.0.0-rc3",
+      "from": "express@3.0.0rc3",
+      "resolved": "https://registry.npmjs.org/express/-/express-3.0.0rc3.tgz",
+      "dependencies": {
+        "commander": {
+          "version": "0.6.1",
+          "from": "commander@0.6.1",
+          "resolved": "https://registry.npmjs.org/commander/-/commander-0.6.1.tgz"
+        },
+        "connect": {
+          "version": "2.4.3",
+          "from": "connect@2.4.3",
+          "resolved": "https://registry.npmjs.org/connect/-/connect-2.4.3.tgz",
+          "dependencies": {
+            "bytes": {
+              "version": "0.1.0",
+              "from": "bytes@0.1.0",
+              "resolved": "https://registry.npmjs.org/bytes/-/bytes-0.1.0.tgz"
+            },
+            "formidable": {
+              "version": "1.0.11",
+              "from": "formidable@1.0.11",
+              "resolved": "https://registry.npmjs.org/formidable/-/formidable-1.0.11.tgz"
+            },
+            "pause": {
+              "version": "0.0.1",
+              "from": "pause@0.0.1"
+            },
+            "qs": {
+              "version": "0.4.2",
+              "from": "qs@0.4.2",
+              "resolved": "https://registry.npmjs.org/qs/-/qs-0.4.2.tgz"
+            }
+          }
+        },
+        "cookie": {
+          "version": "0.0.4",
+          "from": "cookie@0.0.4",
+          "resolved": "https://registry.npmjs.org/cookie/-/cookie-0.0.4.tgz"
+        },
+        "crc": {
+          "version": "0.2.0",
+          "from": "crc@0.2.0",
+          "resolved": "https://registry.npmjs.org/crc/-/crc-0.2.0.tgz"
+        },
+        "debug": {
+          "version": "0.7.4",
+          "from": "debug@*"
+        },
+        "fresh": {
+          "version": "0.1.0",
+          "from": "fresh@0.1.0"
+        },
+        "methods": {
+          "version": "0.0.1",
+          "from": "methods@0.0.1"
+        },
+        "mkdirp": {
+          "version": "0.3.3",
+          "from": "mkdirp@0.3.3",
+          "resolved": "https://registry.npmjs.org/mkdirp/-/mkdirp-0.3.3.tgz"
+        },
+        "range-parser": {
+          "version": "0.0.4",
+          "from": "range-parser@0.0.4"
+        },
+        "send": {
+          "version": "0.0.3",
+          "from": "send@0.0.3",
+          "resolved": "https://registry.npmjs.org/send/-/send-0.0.3.tgz",
+          "dependencies": {
+            "mime": {
+              "version": "1.2.6",
+              "from": "mime@1.2.6",
+              "resolved": "https://registry.npmjs.org/mime/-/mime-1.2.6.tgz"
+            }
+          }
+        }
+      }
+    },
+    "jade": {
+      "version": "0.35.0",
+      "from": "jade@*",
+      "dependencies": {
+        "character-parser": {
+          "version": "1.2.0",
+          "from": "character-parser@1.2.0"
+        },
+        "commander": {
+          "version": "2.0.0",
+          "from": "commander@2.0.0"
+        },
+        "constantinople": {
+          "version": "1.0.2",
+          "from": "constantinople@~1.0.1",
+          "dependencies": {
+            "uglify-js": {
+              "version": "2.4.7",
+              "from": "uglify-js@~2.4.0",
+              "dependencies": {
+                "async": {
+                  "version": "0.2.9",
+                  "from": "async@~0.2.6"
+                },
+                "optimist": {
+                  "version": "0.3.7",
+                  "from": "optimist@~0.3.5",
+                  "dependencies": {
+                    "wordwrap": {
+                      "version": "0.0.2",
+                      "from": "wordwrap@~0.0.2"
+                    }
+                  }
+                },
+                "source-map": {
+                  "version": "0.1.31",
+                  "from": "source-map@~0.1.7",
+                  "dependencies": {
+                    "amdefine": {
+                      "version": "0.1.0",
+                      "from": "amdefine@>=0.0.4"
+                    }
+                  }
+                },
+                "uglify-to-browserify": {
+                  "version": "1.0.1",
+                  "from": "uglify-to-browserify@~1.0.0"
+                }
+              }
+            }
+          }
+        },
+        "mkdirp": {
+          "version": "0.3.5",
+          "from": "mkdirp@0.3.x"
+        },
+        "monocle": {
+          "version": "1.1.50",
+          "from": "monocle@1.1.50",
+          "dependencies": {
+            "readdirp": {
+              "version": "0.2.5",
+              "from": "readdirp@~0.2.3",
+              "dependencies": {
+                "minimatch": {
+                  "version": "0.2.12",
+                  "from": "minimatch@>=0.2.4",
+                  "dependencies": {
+                    "lru-cache": {
+                      "version": "2.5.0",
+                      "from": "lru-cache@2"
+                    },
+                    "sigmund": {
+                      "version": "1.0.0",
+                      "from": "sigmund@~1.0.0"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "transformers": {
+          "version": "2.1.0",
+          "from": "transformers@2.1.0",
+          "dependencies": {
+            "css": {
+              "version": "1.0.8",
+              "from": "css@~1.0.8",
+              "dependencies": {
+                "css-parse": {
+                  "version": "1.0.4",
+                  "from": "css-parse@1.0.4"
+                },
+                "css-stringify": {
+                  "version": "1.0.5",
+                  "from": "css-stringify@1.0.5"
+                }
+              }
+            },
+            "promise": {
+              "version": "2.0.0",
+              "from": "promise@~2.0",
+              "dependencies": {
+                "is-promise": {
+                  "version": "1.0.0",
+                  "from": "is-promise@~1"
+                }
+              }
+            },
+            "uglify-js": {
+              "version": "2.2.5",
+              "from": "uglify-js@~2.2.5",
+              "dependencies": {
+                "optimist": {
+                  "version": "0.3.7",
+                  "from": "optimist@~0.3.5",
+                  "dependencies": {
+                    "wordwrap": {
+                      "version": "0.0.2",
+                      "from": "wordwrap@~0.0.2"
+                    }
+                  }
+                },
+                "source-map": {
+                  "version": "0.1.31",
+                  "from": "source-map@~0.1.7",
+                  "dependencies": {
+                    "amdefine": {
+                      "version": "0.1.0",
+                      "from": "amdefine@>=0.0.4"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "with": {
+          "version": "1.1.1",
+          "from": "with@~1.1.0",
+          "dependencies": {
+            "uglify-js": {
+              "version": "2.4.0",
+              "from": "uglify-js@2.4.0",
+              "dependencies": {
+                "async": {
+                  "version": "0.2.9",
+                  "from": "async@~0.2.6"
+                },
+                "optimist": {
+                  "version": "0.3.7",
+                  "from": "optimist@~0.3.5",
+                  "dependencies": {
+                    "wordwrap": {
+                      "version": "0.0.2",
+                      "from": "wordwrap@~0.0.2"
+                    }
+                  }
+                },
+                "source-map": {
+                  "version": "0.1.31",
+                  "from": "source-map@~0.1.7",
+                  "dependencies": {
+                    "amdefine": {
+                      "version": "0.1.0",
+                      "from": "amdefine@>=0.0.4"
+                    }
+                  }
+                },
+                "uglify-to-browserify": {
+                  "version": "1.0.1",
+                  "from": "uglify-to-browserify@~1.0.0"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
